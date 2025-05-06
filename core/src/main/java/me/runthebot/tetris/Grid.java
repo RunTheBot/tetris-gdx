@@ -1,0 +1,60 @@
+package me.runthebot.tetris;
+
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import lombok.Getter;
+
+public class Grid {
+    @Getter
+    private final int width;
+    @Getter
+    private final int height;
+    private final boolean[][] cells;
+    private final Color[][] colors;
+
+    public Grid(int width, int height) {
+        this.width = width;
+        this.height = height;
+        this.cells = new boolean[height][width];
+        this.colors = new Color[height][width];
+    }
+
+    public boolean isOccupied(int x, int y) {
+        if (x < 0 || x >= width || y < 0 || y >= height) return true;
+        return cells[y][x];
+    }
+
+    public void lockPiece(Piece piece) {
+        boolean[][] shape = piece.getGrid();
+        Color color = piece.getType().getColor();
+        int px = piece.getX();
+        int py = piece.getY();
+
+        for (int row = 0; row < shape.length; row++) {
+            for (int col = 0; col < shape[0].length; col++) {
+                if (shape[row][col]) {
+                    int gx = px + col;
+                    int gy = py + row;
+                    if (gx >= 0 && gx < width && gy >= 0 && gy < height) {
+                        cells[gy][gx] = true;
+                        colors[gy][gx] = color;
+                    }
+                }
+            }
+        }
+    }
+
+    public void render(ShapeRenderer renderer) {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (cells[y][x]) {
+                    Color c = colors[y][x] != null ? colors[y][x] : Color.WHITE;
+                    renderer.setColor(c);
+                    renderer.rect(x * GameScreen.BLOCK_SIZE, (GameScreen.GRID_HEIGHT - y - 1) * GameScreen.BLOCK_SIZE,
+                        GameScreen.BLOCK_SIZE, GameScreen.BLOCK_SIZE);
+                }
+            }
+        }
+    }
+
+}
