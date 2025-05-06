@@ -2,7 +2,11 @@ package me.runthebot.tetris;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 public class Piece {
     private final Tetrimino type;
     private boolean[][] grid;
@@ -71,29 +75,5 @@ public class Piece {
                 }
             }
         }
-    }
-
-    public Tetrimino getType() {
-        return type;
-    }
-
-    public boolean[][] getGrid() {
-        return grid;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public void setY(int y) {
-        this.y = y;
     }
 }

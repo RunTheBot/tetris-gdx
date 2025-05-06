@@ -66,11 +66,11 @@ public class GameScreen implements Screen {
     private void handleInput() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
             currentPiece.move(-1, 0, grid);
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+        } if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
             currentPiece.move(1, 0, grid);
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+        } if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
             currentPiece.move(0, 1, grid);
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+        } if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
             currentPiece.rotate(grid);
         }
     }
