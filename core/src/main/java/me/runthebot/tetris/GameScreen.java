@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class GameScreen implements Screen {
     public static final int GRID_WIDTH = 10;
@@ -15,6 +17,7 @@ public class GameScreen implements Screen {
     public static final int BLOCK_SIZE = 30;
 
     private final OrthographicCamera camera;
+    private final Viewport viewport;
     private final ShapeRenderer shapeRenderer;
 
     private final Grid grid;
@@ -25,7 +28,12 @@ public class GameScreen implements Screen {
 
     public GameScreen() {
         camera = new OrthographicCamera();
+//        camera.setToOrtho(false, GRID_WIDTH * BLOCK_SIZE, GRID_HEIGHT * BLOCK_SIZE);
+
         camera.setToOrtho(false, GRID_WIDTH * BLOCK_SIZE, GRID_HEIGHT * BLOCK_SIZE);
+
+        viewport = new FitViewport(GRID_WIDTH * BLOCK_SIZE, GRID_HEIGHT * BLOCK_SIZE, camera); // logical size
+        viewport.apply();
 
         shapeRenderer = new ShapeRenderer();
 
@@ -79,7 +87,9 @@ public class GameScreen implements Screen {
     }
 
     @Override public void show() {}
-    @Override public void resize(int width, int height) {}
+    @Override public void resize(int width, int height) {
+        viewport.update(width, height);
+    }
     @Override public void pause() {}
     @Override public void resume() {}
     @Override public void hide() {}
