@@ -64,6 +64,7 @@ public class Piece {
     }
 
     public void render(ShapeRenderer renderer) {
+        renderer.begin(ShapeRenderer.ShapeType.Filled);
         renderer.setColor(getType().getColor());
         for (int row = 0; row < grid.length; row++) {
             for (int col = 0; col < grid[0].length; col++) {
@@ -75,5 +76,6 @@ public class Piece {
                 }
             }
         }
+        renderer.end();
     }
 }

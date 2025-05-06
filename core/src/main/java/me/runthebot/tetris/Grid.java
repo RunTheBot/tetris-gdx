@@ -45,6 +45,20 @@ public class Grid {
     }
 
     public void render(ShapeRenderer renderer) {
+        // Draw grid lines
+        renderer.begin(ShapeRenderer.ShapeType.Line);
+        renderer.setColor(Color.DARK_GRAY);
+        for (int y = 0; y <= height; y++) {
+            renderer.line(0, y * GameScreen.BLOCK_SIZE,
+                width * GameScreen.BLOCK_SIZE, y * GameScreen.BLOCK_SIZE);
+        }
+        for (int x = 0; x <= width; x++) {
+            renderer.line(x * GameScreen.BLOCK_SIZE, 0,
+                x * GameScreen.BLOCK_SIZE, height * GameScreen.BLOCK_SIZE);
+        }
+        renderer.end();
+
+        renderer.begin(ShapeRenderer.ShapeType.Filled);
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if (cells[y][x]) {
@@ -55,6 +69,7 @@ public class Grid {
                 }
             }
         }
+        renderer.end();
     }
 
 }

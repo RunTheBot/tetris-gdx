@@ -57,7 +57,6 @@ public class GameScreen implements Screen {
 
         camera.update();
         shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         grid.render(shapeRenderer);
         currentPiece.render(shapeRenderer);
         shapeRenderer.end();
