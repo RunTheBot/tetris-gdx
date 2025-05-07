@@ -10,6 +10,11 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 public class GameScreen implements Screen {
     public static final int GRID_WIDTH = 10;
@@ -32,6 +37,7 @@ public class GameScreen implements Screen {
 
     private final Grid grid;
     private Piece currentPiece;
+    private Queue<Tetrimino> nextPieces;
 
     private long lastFallTime;
     private float gravity = 0.5f; // Tiles per second
@@ -48,12 +54,32 @@ public class GameScreen implements Screen {
         shapeRenderer = new ShapeRenderer();
 
         grid = new Grid(GRID_WIDTH, GRID_HEIGHT);
+        nextPieces = new LinkedList<>();
+        fillBag(); // Initialize with first bag
         spawnNewPiece();
         lastFallTime = TimeUtils.millis();
     }
 
+    /**
+     * Generates a new shuffled bag of all 7 Tetriminos and adds them to the queue
+     */
+    private void fillBag() {
+        List<Tetrimino> bag = new ArrayList<>();
+        for (Tetrimino tetrimino : Tetrimino.values()) {
+            bag.add(tetrimino);
+        }
+        Collections.shuffle(bag);
+        nextPieces.addAll(bag);
+    }
+
     private void spawnNewPiece() {
-        Tetrimino t = Tetrimino.values()[(int) (Math.random() * Tetrimino.values().length)];
+        // Check if we need to refill the bag
+        if (nextPieces.size() < 7) {
+            fillBag();
+        }
+
+        // Get the next piece from the queue
+        Tetrimino t = nextPieces.poll();
         currentPiece = new Piece(t);
     }
 
