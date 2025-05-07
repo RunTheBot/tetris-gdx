@@ -80,6 +80,11 @@ public class GameScreen implements Screen {
             int rowsDropped = currentPiece.hardDrop(grid);
             // rowsDropped can be used for scoring in the future
             grid.lockPiece(currentPiece);
+
+            // Check for line clears after locking the piece
+            int linesCleared = grid.checkAndClearLines();
+            // TODO: Update score based on linesCleared
+
             spawnNewPiece();
             return;
         }
@@ -144,6 +149,11 @@ public class GameScreen implements Screen {
             boolean moved = currentPiece.move(0, 1, grid);
             if (!moved) {
                 grid.lockPiece(currentPiece);
+
+                // Also check for line clears here for consistency
+                int linesCleared = grid.checkAndClearLines();
+                // TODO: Update score based on linesCleared
+
                 spawnNewPiece();
             }
             lastFallTime = TimeUtils.millis();

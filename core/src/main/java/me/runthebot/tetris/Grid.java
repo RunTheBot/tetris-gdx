@@ -44,6 +44,58 @@ public class Grid {
         }
     }
 
+    /**
+     * Checks for filled lines and clears them.
+     *
+     * @return The number of lines cleared
+     */
+    public int checkAndClearLines() {
+        int linesCleared = 0;
+
+        // Check each row from bottom to top
+        for (int y = height - 1; y >= 0; y--) {
+            // Check if the line is full
+            boolean lineFull = true;
+            for (int x = 0; x < width; x++) {
+                if (!cells[y][x]) {
+                    lineFull = false;
+                    break;
+                }
+            }
+
+            if (lineFull) {
+                // Clear the line
+                clearLine(y);
+                linesCleared++;
+                // We need to recheck this row since everything above moved down
+                y++;
+            }
+        }
+
+        return linesCleared;
+    }
+
+    /**
+     * Clears a line and moves all lines above it down.
+     *
+     * @param lineY The y-coordinate of the line to clear
+     */
+    private void clearLine(int lineY) {
+        // Move all lines above down
+        for (int y = lineY; y > 0; y--) {
+            for (int x = 0; x < width; x++) {
+                cells[y][x] = cells[y-1][x];
+                colors[y][x] = colors[y-1][x];
+            }
+        }
+
+        // Clear the top line
+        for (int x = 0; x < width; x++) {
+            cells[0][x] = false;
+            colors[0][x] = null;
+        }
+    }
+
     public void render(ShapeRenderer renderer) {
         // Draw grid lines
         renderer.begin(ShapeRenderer.ShapeType.Line);
