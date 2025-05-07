@@ -16,6 +16,16 @@ public class GameScreen implements Screen {
     public static final int GRID_HEIGHT = 20;
     public static final int BLOCK_SIZE = 30;
 
+    // DAS and ARR constants (in milliseconds)
+    private static final long DAS_DELAY = 170; // Delayed Auto Shift initial delay
+    private static final long ARR_DELAY = 30;  // Auto Repeat Rate delay
+
+    // Track key press times and last move times
+    private long leftPressTime = 0;
+    private long rightPressTime = 0;
+    private long lastLeftMoveTime = 0;
+    private long lastRightMoveTime = 0;
+
     private final OrthographicCamera camera;
     private final Viewport viewport;
     private final ShapeRenderer shapeRenderer;
@@ -63,13 +73,67 @@ public class GameScreen implements Screen {
     }
 
     private void handleInput() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
-            currentPiece.move(-1, 0, grid);
-        } if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
-            currentPiece.move(1, 0, grid);
-        } if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+        long currentTime = TimeUtils.millis();
+
+        // Hard drop (Space key)
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            while (currentPiece.move(0, 1, grid)) {}
+            grid.lockPiece(currentPiece);
+            spawnNewPiece();
+            return;
+        }
+
+        // Soft drop (faster fall)
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             currentPiece.move(0, 1, grid);
-        } if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+        }
+
+        // Left movement with DAS
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            // Initial press
+            if (leftPressTime == 0) {
+                leftPressTime = currentTime;
+                lastLeftMoveTime = currentTime;
+                currentPiece.move(-1, 0, grid);
+            } else {
+                long elapsedSincePress = currentTime - leftPressTime;
+                long elapsedSinceLastMove = currentTime - lastLeftMoveTime;
+
+                // If we've passed the DAS delay, move all the way to the left edge
+                if (elapsedSincePress > DAS_DELAY && elapsedSinceLastMove >= ARR_DELAY) {
+                    // Move all the way to the left until it can't move anymore
+                    while (currentPiece.move(-1, 0, grid)) {}
+                    lastLeftMoveTime = currentTime;
+                }
+            }
+        } else {
+            leftPressTime = 0;  // Reset only when key is released
+        }
+
+        // Right movement with DAS
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            // Initial press
+            if (rightPressTime == 0) {
+                rightPressTime = currentTime;
+                lastRightMoveTime = currentTime;
+                currentPiece.move(1, 0, grid);
+            } else {
+                long elapsedSincePress = currentTime - rightPressTime;
+                long elapsedSinceLastMove = currentTime - lastRightMoveTime;
+
+                // If we've passed the DAS delay and it's time for ARR movement
+                if (elapsedSincePress > DAS_DELAY && elapsedSinceLastMove >= ARR_DELAY) {
+                    // Move all the way to the right until it can't move anymore
+                    while (currentPiece.move(1, 0, grid)) {}
+                    lastRightMoveTime = currentTime;
+                }
+            }
+        } else {
+            rightPressTime = 0;  // Reset only when key is released
+        }
+
+        // Rotation
+        if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
             currentPiece.rotate(grid);
         }
     }
