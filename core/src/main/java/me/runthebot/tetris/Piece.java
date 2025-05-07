@@ -37,6 +37,20 @@ public class Piece {
         }
     }
 
+    /**
+     * Drops the piece as far down as possible.
+     *
+     * @param grid The grid to check for collisions
+     * @return The number of rows the piece was dropped
+     */
+    public int hardDrop(Grid grid) {
+        int rowsDropped = 0;
+        while (move(0, 1, grid)) {
+            rowsDropped++;
+        }
+        return rowsDropped;
+    }
+
     private boolean collides(int tx, int ty, boolean[][] shape, Grid field) {
         for (int row = 0; row < shape.length; row++) {
             for (int col = 0; col < shape[0].length; col++) {

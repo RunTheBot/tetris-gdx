@@ -77,7 +77,8 @@ public class GameScreen implements Screen {
 
         // Hard drop (Space key)
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            while (currentPiece.move(0, 1, grid)) {}
+            int rowsDropped = currentPiece.hardDrop(grid);
+            // rowsDropped can be used for scoring in the future
             grid.lockPiece(currentPiece);
             spawnNewPiece();
             return;
