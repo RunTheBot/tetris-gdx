@@ -34,6 +34,8 @@ public class Piece {
         boolean[][] rotated = rotate90(grid);
         if (!collides(x, y, rotated, field)) {
             grid = rotated;
+        } else {
+            // TODO: SRS+ kicks
         }
     }
 

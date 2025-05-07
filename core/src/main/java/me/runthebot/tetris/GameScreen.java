@@ -10,11 +10,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+
+import java.util.*;
 
 public class GameScreen implements Screen {
     public static final int GRID_WIDTH = 10;
@@ -64,10 +61,7 @@ public class GameScreen implements Screen {
      * Generates a new shuffled bag of all 7 Tetriminos and adds them to the queue
      */
     private void fillBag() {
-        List<Tetrimino> bag = new ArrayList<>();
-        for (Tetrimino tetrimino : Tetrimino.values()) {
-            bag.add(tetrimino);
-        }
+        List<Tetrimino> bag = new ArrayList<>(Arrays.asList(Tetrimino.values()));
         Collections.shuffle(bag);
         nextPieces.addAll(bag);
     }
