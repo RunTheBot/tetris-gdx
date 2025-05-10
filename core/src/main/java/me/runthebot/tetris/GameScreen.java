@@ -28,7 +28,6 @@ public class GameScreen implements Screen {
     private long lastLeftMoveTime = 0;
     private long lastRightMoveTime = 0;
 
-    private final OrthographicCamera camera;
     private final Viewport viewport;
     private final ShapeRenderer shapeRenderer;
 
@@ -40,10 +39,6 @@ public class GameScreen implements Screen {
     private float gravity = 0.5f; // Tiles per second
 
     public GameScreen() {
-        camera = new OrthographicCamera();
-//        camera.setToOrtho(false, GRID_WIDTH * BLOCK_SIZE, GRID_HEIGHT * BLOCK_SIZE);
-
-        camera.setToOrtho(false, GRID_WIDTH * BLOCK_SIZE, GRID_HEIGHT * BLOCK_SIZE);
 
         viewport = new FitViewport(GRID_WIDTH * BLOCK_SIZE, GRID_HEIGHT * BLOCK_SIZE, camera); // logical size
         viewport.apply();
