@@ -34,6 +34,7 @@ public class GameScreen implements Screen {
 
     private final Grid grid;
     private Piece currentPiece;
+    private Piece ghostPiece;  // Ghost piece for landing preview
     private Queue<Tetrimino> nextPieces;
 
     private long lastFallTime;
@@ -75,6 +76,21 @@ public class GameScreen implements Screen {
         // Get the next piece from the queue
         Tetrimino t = nextPieces.poll();
         currentPiece = new Piece(t);
+        ghostPiece = new Piece(t);  // Create ghost piece with the same shape
+        updateGhostPiece();  // Position the ghost
+    }
+
+    /**
+     * Updates the ghost piece to show where the current piece would land
+     */
+    private void updateGhostPiece() {
+        // Create a fresh copy of the current piece to ensure correct shape/rotation
+        ghostPiece = new Piece(currentPiece.getType());
+        ghostPiece.setRotation(currentPiece.getRotation());
+        ghostPiece.setPosition(currentPiece.getX(), currentPiece.getY());
+
+        // Drop the ghost piece as far as it can go
+        while (ghostPiece.move(0, 1, grid)) { }
     }
 
     @Override
@@ -88,6 +104,9 @@ public class GameScreen implements Screen {
         camera.update();
         shapeRenderer.setProjectionMatrix(camera.combined);
         grid.render(shapeRenderer);
+
+        // Render ghost piece with transparency
+        ghostPiece.render(shapeRenderer, 0.3f);  // Pass alpha value for transparency
         currentPiece.render(shapeRenderer);
         shapeRenderer.end();
     }
@@ -111,7 +130,10 @@ public class GameScreen implements Screen {
 
         // Soft drop (faster fall)
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            currentPiece.move(0, 1, grid);
+            boolean moved = currentPiece.move(0, 1, grid);
+            if (moved) {
+                updateGhostPiece();
+            }
         }
 
         // Left movement with DAS
@@ -120,15 +142,21 @@ public class GameScreen implements Screen {
             if (leftPressTime == 0) {
                 leftPressTime = currentTime;
                 lastLeftMoveTime = currentTime;
-                currentPiece.move(-1, 0, grid);
+                if (currentPiece.move(-1, 0, grid)) {
+                    updateGhostPiece();
+                }
             } else {
                 long elapsedSincePress = currentTime - leftPressTime;
                 long elapsedSinceLastMove = currentTime - lastLeftMoveTime;
 
                 // If we've passed the DAS delay, move all the way to the left edge
                 if (elapsedSincePress > DAS_DELAY && elapsedSinceLastMove >= ARR_DELAY) {
+                    boolean moved = false;
                     // Move all the way to the left until it can't move anymore
-                    while (currentPiece.move(-1, 0, grid)) {}
+                    while (currentPiece.move(-1, 0, grid)) {
+                        moved = true;
+                    }
+                    if (moved) updateGhostPiece();
                     lastLeftMoveTime = currentTime;
                 }
             }
@@ -142,15 +170,21 @@ public class GameScreen implements Screen {
             if (rightPressTime == 0) {
                 rightPressTime = currentTime;
                 lastRightMoveTime = currentTime;
-                currentPiece.move(1, 0, grid);
+                if (currentPiece.move(1, 0, grid)) {
+                    updateGhostPiece();
+                }
             } else {
                 long elapsedSincePress = currentTime - rightPressTime;
                 long elapsedSinceLastMove = currentTime - lastRightMoveTime;
 
                 // If we've passed the DAS delay and it's time for ARR movement
                 if (elapsedSincePress > DAS_DELAY && elapsedSinceLastMove >= ARR_DELAY) {
+                    boolean moved = false;
                     // Move all the way to the right until it can't move anymore
-                    while (currentPiece.move(1, 0, grid)) {}
+                    while (currentPiece.move(1, 0, grid)) {
+                        moved = true;
+                    }
+                    if (moved) updateGhostPiece();
                     lastRightMoveTime = currentTime;
                 }
             }
@@ -160,7 +194,9 @@ public class GameScreen implements Screen {
 
         // Rotation
         if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-            currentPiece.rotate(grid);
+            if (currentPiece.rotate(grid)) {
+                updateGhostPiece();
+            }
         }
     }
 
