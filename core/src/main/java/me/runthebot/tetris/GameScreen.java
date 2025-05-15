@@ -16,10 +16,6 @@ import java.util.*;
 public class GameScreen implements Screen {
     final Tetris game;
 
-    public static final int GRID_WIDTH = 10;
-    public static final int GRID_HEIGHT = 20;
-    public static final int BLOCK_SIZE = 30;
-
     // DAS and ARR constants (in milliseconds)
     private static final long DAS_DELAY = 170; // Delayed Auto Shift initial delay
     private static final long ARR_DELAY = 30;  // Auto Repeat Rate delay
@@ -44,7 +40,7 @@ public class GameScreen implements Screen {
         this.game = game;
 
         shapeRenderer = new ShapeRenderer();
-        grid = new Grid(GRID_WIDTH, GRID_HEIGHT);
+        grid = new Grid(Tetris.GRID_WIDTH, Tetris.GRID_HEIGHT);
         nextPieces = new LinkedList<>();
         fillBag(); // Initialize with first bag
         spawnNewPiece();
