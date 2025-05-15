@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.kotcrab.vis.ui.VisUI;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Tetris extends Game {
@@ -19,6 +20,9 @@ public class Tetris extends Game {
 
     @Override
     public void create() {
+        // load UI library
+        VisUI.load();
+
         batch = new SpriteBatch();
         font = new BitmapFont();
         camera = new OrthographicCamera();
@@ -32,6 +36,13 @@ public class Tetris extends Game {
         super.render();
     }
 
+    // this seems right
+    @Override
     public void dispose() {
+        super.dispose();
+        VisUI.dispose();
+        if (screen != null) {
+            screen.dispose();
+        }
     }
 }
