@@ -1,23 +1,44 @@
 package me.runthebot.tetris;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.ScreenUtils;
 
-// TODO: stuff
-/** First screen of the application. Displayed after the application is created. */
 public class MenuScreen implements Screen {
+    final Tetris game;
+
+    public MenuScreen(final Tetris game) {
+        this.game = game;
+    }
+
+    @Override
+    public void render(float delta) {
+        ScreenUtils.clear(Color.BLACK);
+
+        game.viewport.apply();
+        game.batch.setProjectionMatrix(game.viewport.getCamera().combined);
+        game.batch.begin();
+        game.font.setColor(Color.WHITE);
+        game.font.getData().setScale(3);
+        game.font.draw(game.batch, "Tetris", game.viewport.getWorldWidth() / 2 - 50, game.viewport.getWorldHeight() - 50);
+        game.batch.end();
+
+        if (Gdx.input.isTouched()) {
+            game.setScreen(new GameScreen(game));
+            dispose();
+        }
+    }
+
     @Override
     public void show() {
         // Prepare your screen here.
     }
 
-    @Override
-    public void render(float delta) {
-        // Draw your screen here. "delta" is the time since last render in seconds.
-    }
 
     @Override
     public void resize(int width, int height) {
-        // Resize your screen here. The parameters represent the new window size.
+        game.viewport.update(width, height, true);
     }
 
     @Override

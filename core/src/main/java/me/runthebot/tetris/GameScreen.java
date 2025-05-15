@@ -14,6 +14,8 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import java.util.*;
 
 public class GameScreen implements Screen {
+    final Tetris game;
+
     public static final int GRID_WIDTH = 10;
     public static final int GRID_HEIGHT = 20;
     public static final int BLOCK_SIZE = 30;
@@ -28,8 +30,6 @@ public class GameScreen implements Screen {
     private long lastLeftMoveTime = 0;
     private long lastRightMoveTime = 0;
 
-    private final OrthographicCamera camera;
-    private final Viewport viewport;
     private final ShapeRenderer shapeRenderer;
 
     private final Grid grid;
@@ -40,22 +40,33 @@ public class GameScreen implements Screen {
     private long lastFallTime;
     private float gravity = 0.5f; // Tiles per second
 
-    public GameScreen() {
-        camera = new OrthographicCamera();
-//        camera.setToOrtho(false, GRID_WIDTH * BLOCK_SIZE, GRID_HEIGHT * BLOCK_SIZE);
-
-        camera.setToOrtho(false, GRID_WIDTH * BLOCK_SIZE, GRID_HEIGHT * BLOCK_SIZE);
-
-        viewport = new FitViewport(GRID_WIDTH * BLOCK_SIZE, GRID_HEIGHT * BLOCK_SIZE, camera); // logical size
-        viewport.apply();
+    public GameScreen(final Tetris game) {
+        this.game = game;
 
         shapeRenderer = new ShapeRenderer();
-
         grid = new Grid(GRID_WIDTH, GRID_HEIGHT);
         nextPieces = new LinkedList<>();
         fillBag(); // Initialize with first bag
         spawnNewPiece();
         lastFallTime = TimeUtils.millis();
+    }
+
+    @Override
+    public void render(float delta) {
+        handleInput();
+        update();
+
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        game.camera.update();
+        shapeRenderer.setProjectionMatrix(game.camera.combined);
+        grid.render(shapeRenderer);
+
+        // Render ghost piece with transparency
+        ghostPiece.render(shapeRenderer, 0.3f);  // Pass alpha value for transparency
+        currentPiece.render(shapeRenderer);
+        shapeRenderer.end();
     }
 
     /**
@@ -91,24 +102,6 @@ public class GameScreen implements Screen {
 
         // Drop the ghost piece as far as it can go
         while (ghostPiece.move(0, 1, grid)) { }
-    }
-
-    @Override
-    public void render(float delta) {
-        handleInput();
-        update();
-
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        camera.update();
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        grid.render(shapeRenderer);
-
-        // Render ghost piece with transparency
-        ghostPiece.render(shapeRenderer, 0.3f);  // Pass alpha value for transparency
-        currentPiece.render(shapeRenderer);
-        shapeRenderer.end();
     }
 
     private void handleInput() {
@@ -218,7 +211,7 @@ public class GameScreen implements Screen {
 
     @Override public void show() {}
     @Override public void resize(int width, int height) {
-        viewport.update(width, height);
+        game.viewport.update(width, height);
     }
     @Override public void pause() {}
     @Override public void resume() {}
