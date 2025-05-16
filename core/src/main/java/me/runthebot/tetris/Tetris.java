@@ -10,7 +10,8 @@ import com.kotcrab.vis.ui.VisUI;
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Tetris extends Game {
     public static final int GRID_WIDTH = 10;
-    public static final int GRID_HEIGHT = 20;
+    public static final int BUFFER_SIZE = 20;
+    public static final int GRID_HEIGHT = 20 + BUFFER_SIZE;
     public static final int BLOCK_SIZE = 30;
 
     public SpriteBatch batch;

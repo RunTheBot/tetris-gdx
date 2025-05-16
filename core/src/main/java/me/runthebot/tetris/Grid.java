@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import lombok.Getter;
 
+import static me.runthebot.tetris.Tetris.BUFFER_SIZE;
+
 public class Grid {
     @Getter
     private final int width;
@@ -100,13 +102,13 @@ public class Grid {
         // Draw grid lines
         renderer.begin(ShapeRenderer.ShapeType.Line);
         renderer.setColor(Color.DARK_GRAY);
-        for (int y = 0; y <= height; y++) {
+        for (int y = 0; y <= height - BUFFER_SIZE; y++) {
             renderer.line(0, y * Tetris.BLOCK_SIZE,
                 width * Tetris.BLOCK_SIZE, y * Tetris.BLOCK_SIZE);
         }
         for (int x = 0; x <= width; x++) {
             renderer.line(x * Tetris.BLOCK_SIZE, 0,
-                x * Tetris.BLOCK_SIZE, height * Tetris.BLOCK_SIZE);
+                x * Tetris.BLOCK_SIZE, (height - BUFFER_SIZE) * Tetris.BLOCK_SIZE);
         }
         renderer.end();
 
