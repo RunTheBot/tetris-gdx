@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.kotcrab.vis.ui.widget.VisWindow;
@@ -21,7 +22,7 @@ public class MenuScreen implements Screen {
 
     @Override
     public void show() {
-        Viewport viewport = game.viewport;
+        ScreenViewport viewport = new ScreenViewport();
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
 
