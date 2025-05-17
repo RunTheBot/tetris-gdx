@@ -22,7 +22,7 @@ public class Tetris extends Game {
     @Override
     public void create() {
         // load UI library
-        VisUI.load();
+        VisUI.load(VisUI.SkinScale.X2);
 
         batch = new SpriteBatch();
         font = new BitmapFont();
