@@ -15,7 +15,6 @@ import com.kotcrab.vis.ui.widget.VisWindow;
 public class MenuScreen implements Screen {
     private final Tetris game;
     private Stage stage;
-    private VisWindow window;
 
     public MenuScreen(final Tetris game) {
         this.game = game;
@@ -27,17 +26,11 @@ public class MenuScreen implements Screen {
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
 
-        VisWindow window = new VisWindow("Main Menu");
-        window.setMovable(false);
-        window.setResizable(false);
-        window.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
-        window.setPosition(0, 0);
-
         VisLabel menuLabel = new VisLabel("Tetris");
         menuLabel.setFontScale(3f);
 
         VisTextButton classicPlayButton = new VisTextButton("Play Classic");
-        classicPlayButton.getLabel().setFontScale(2f); // additionally scale the button text
+        classicPlayButton.getLabel().setFontScale(2f);
         classicPlayButton.addListener(event -> {
             if (classicPlayButton.isPressed()) {
                 game.setScreen(new GameScreen(game));
@@ -47,7 +40,7 @@ public class MenuScreen implements Screen {
         });
 
         VisTextButton sprintPlayButton = new VisTextButton("Play Sprint");
-        sprintPlayButton.getLabel().setFontScale(2f); // additionally scale the button text
+        sprintPlayButton.getLabel().setFontScale(2f);
         sprintPlayButton.addListener(event -> {
             if (sprintPlayButton.isPressed()) {
                 game.setScreen(new GameScreen(game));
@@ -57,7 +50,7 @@ public class MenuScreen implements Screen {
         });
 
         VisTextButton arcadePlayButton = new VisTextButton("Play Arcade");
-        arcadePlayButton.getLabel().setFontScale(2f); // additionally scale the button text
+        arcadePlayButton.getLabel().setFontScale(2f);
         arcadePlayButton.addListener(event -> {
             if (arcadePlayButton.isPressed()) {
                 game.setScreen(new GameScreen(game));
@@ -78,19 +71,20 @@ public class MenuScreen implements Screen {
 
         Table table = new Table();
         table.setFillParent(true);
-        table.add(menuLabel);
-        table.add(classicPlayButton).pad(40).width(300).height(100);
-        table.add(sprintPlayButton);
-        table.add(arcadePlayButton);
-        table.add(settingsButton);
-        // TODO: make vertical
-        window.add(table).expand().fill();
+        table.center();
 
-        stage.addActor(window);
+        table.add(menuLabel).padBottom(80f).row();
+        table.add(classicPlayButton).width(360).height(90).padBottom(30f).row();
+        table.add(sprintPlayButton).width(360).height(90).padBottom(30f).row();
+        table.add(arcadePlayButton).width(360).height(90).padBottom(60f).row();
+        table.add(settingsButton).width(200).height(60).padBottom(10f).row();
+
+        stage.addActor(table);
     }
 
     @Override
     public void render(float delta) {
+        ScreenUtils.clear(0.08f, 0.13f, 0.22f, 1);
         stage.act(delta);
         stage.draw();
     }
@@ -99,9 +93,6 @@ public class MenuScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
-        if (window != null) {
-            window.setSize(stage.getViewport().getWorldWidth(), stage.getViewport().getWorldHeight());
-        }
     }
 
     @Override
