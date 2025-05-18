@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.kotcrab.vis.ui.widget.VisCheckBox;
 import com.kotcrab.vis.ui.widget.VisSlider;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.kotcrab.vis.ui.widget.VisWindow;
@@ -33,10 +34,12 @@ public class SettingsScreen implements Screen {
 
         VisSlider arrSlider = new VisSlider(0, 100, 1, false);
 
+        VisCheckBox animationBox = new VisCheckBox("Display Animations");
 
         Table table = new Table();
         table.setFillParent(true);
         table.add(arrSlider).pad(40).width(300).height(100);
+        table.add(animationBox);
         window.add(table).expand().fill();
 
         stage.addActor(window);

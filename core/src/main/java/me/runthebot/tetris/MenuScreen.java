@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.kotcrab.vis.ui.widget.VisWindow;
 
@@ -32,10 +33,33 @@ public class MenuScreen implements Screen {
         window.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
         window.setPosition(0, 0);
 
-        VisTextButton playButton = new VisTextButton("Play");
-        playButton.getLabel().setFontScale(2f); // additionally scale the button text
-        playButton.addListener(event -> {
-            if (playButton.isPressed()) {
+        VisLabel menuLabel = new VisLabel("Tetris");
+        menuLabel.setFontScale(3f);
+
+        VisTextButton classicPlayButton = new VisTextButton("Play Classic");
+        classicPlayButton.getLabel().setFontScale(2f); // additionally scale the button text
+        classicPlayButton.addListener(event -> {
+            if (classicPlayButton.isPressed()) {
+                game.setScreen(new GameScreen(game));
+                return true;
+            }
+            return false;
+        });
+
+        VisTextButton sprintPlayButton = new VisTextButton("Play Sprint");
+        sprintPlayButton.getLabel().setFontScale(2f); // additionally scale the button text
+        sprintPlayButton.addListener(event -> {
+            if (sprintPlayButton.isPressed()) {
+                game.setScreen(new GameScreen(game));
+                return true;
+            }
+            return false;
+        });
+
+        VisTextButton arcadePlayButton = new VisTextButton("Play Arcade");
+        arcadePlayButton.getLabel().setFontScale(2f); // additionally scale the button text
+        arcadePlayButton.addListener(event -> {
+            if (arcadePlayButton.isPressed()) {
                 game.setScreen(new GameScreen(game));
                 return true;
             }
@@ -54,8 +78,11 @@ public class MenuScreen implements Screen {
 
         Table table = new Table();
         table.setFillParent(true);
-        table.add(playButton).pad(40).width(300).height(100);
-        table.add(settingsButton).pad(40).width(300).height(100);
+        table.add(menuLabel);
+        table.add(classicPlayButton).pad(40).width(300).height(100);
+        table.add(sprintPlayButton);
+        table.add(arcadePlayButton);
+        table.add(settingsButton);
         // TODO: make vertical
         window.add(table).expand().fill();
 
