@@ -2,21 +2,19 @@ package me.runthebot.tetris;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
+import com.kotcrab.vis.ui.widget.VisSlider;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.kotcrab.vis.ui.widget.VisWindow;
 
-public class MenuScreen implements Screen {
+public class SettingsScreen implements Screen {
     private final Tetris game;
     private Stage stage;
     private VisWindow window;
 
-    public MenuScreen(final Tetris game) {
+    public SettingsScreen(final Tetris game) {
         this.game = game;
     }
 
@@ -26,41 +24,24 @@ public class MenuScreen implements Screen {
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
 
-        VisWindow window = new VisWindow("Main Menu");
+        VisWindow window = new VisWindow("Settings");
         window.setMovable(false);
         window.setResizable(false);
         window.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
         window.setPosition(0, 0);
 
-        VisTextButton playButton = new VisTextButton("Play");
-        playButton.getLabel().setFontScale(2f); // additionally scale the button text
-        playButton.addListener(event -> {
-            if (playButton.isPressed()) {
-                game.setScreen(new GameScreen(game));
-                return true;
-            }
-            return false;
-        });
 
-        VisTextButton settingsButton = new VisTextButton("Settings");
-        settingsButton.getLabel().setFontScale(1f);
-        settingsButton.addListener(event -> {
-            if (settingsButton.isPressed()) {
-                game.setScreen(new SettingsScreen(game));
-                return true;
-            }
-            return false;
-        });
+        VisSlider arrSlider = new VisSlider(0, 100, 1, false);
+
 
         Table table = new Table();
         table.setFillParent(true);
-        table.add(playButton).pad(40).width(300).height(100);
-        table.add(settingsButton).pad(40).width(300).height(100);
-        // TODO: make vertical
+        table.add(arrSlider).pad(40).width(300).height(100);
         window.add(table).expand().fill();
 
         stage.addActor(window);
     }
+
 
     @Override
     public void render(float delta) {
