@@ -4,16 +4,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.kotcrab.vis.ui.widget.VisCheckBox;
-import com.kotcrab.vis.ui.widget.VisSlider;
-import com.kotcrab.vis.ui.widget.VisTextButton;
-import com.kotcrab.vis.ui.widget.VisWindow;
+import com.kotcrab.vis.ui.widget.*;
 
 public class SettingsScreen implements Screen {
     private final Tetris game;
     private Stage stage;
-    private VisWindow window;
+    // does this need to be a field
+    private VisSlider arrSlider;
+    private VisLabel arrValueLabel;
 
     public SettingsScreen(final Tetris game) {
         this.game = game;
@@ -25,29 +25,54 @@ public class SettingsScreen implements Screen {
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
 
-        VisWindow window = new VisWindow("Settings");
-        window.setMovable(false);
-        window.setResizable(false);
-        window.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
-        window.setPosition(0, 0);
+        VisLabel titleLabel = new VisLabel("Settings");
+        titleLabel.setFontScale(2.2f);
 
+        // ARR slider
+        arrSlider = new VisSlider(0, 100, 1, false);
+        arrSlider.setValue(30);
+        // TODO: add tooltips?
+        arrValueLabel = new VisLabel("ARR: " + arrSlider.getValue());
+        arrSlider.addListener(event -> {
+            arrValueLabel.setText("ARR: " + arrSlider.getValue());
+            // or true
+            return false;
+        });
 
-        VisSlider arrSlider = new VisSlider(0, 100, 1, false);
+        Table arrTable = new Table();
+        arrTable.add(new VisLabel("Auto Repeat Rate (ARR)")).padRight(18f);
+        arrTable.add(arrSlider).width(240);
+        arrTable.add(arrValueLabel).width(70).padLeft(8f);
 
+        // animation
         VisCheckBox animationBox = new VisCheckBox("Display Animations");
+        animationBox.setChecked(true);
+
+        VisTextButton backButton = new VisTextButton("Back");
+        backButton.addListener(event -> {
+            if (backButton.isPressed()) {
+                game.setScreen(new MenuScreen(game));
+                return true;
+            }
+            return false;
+        });
 
         Table table = new Table();
         table.setFillParent(true);
-        table.add(arrSlider).pad(40).width(300).height(100);
-        table.add(animationBox);
-        window.add(table).expand().fill();
+        table.center();
 
-        stage.addActor(window);
+        table.add(titleLabel).padBottom(48f).row();
+        table.add(arrTable).padBottom(32f).row();
+        table.add(animationBox).padBottom(48f).row();
+        table.add(backButton).width(180).height(60);
+
+        stage.addActor(table);
     }
 
 
     @Override
     public void render(float delta) {
+        ScreenUtils.clear(0.08f, 0.13f, 0.22f, 1);
         stage.act(delta);
         stage.draw();
     }
@@ -56,9 +81,6 @@ public class SettingsScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
-        if (window != null) {
-            window.setSize(stage.getViewport().getWorldWidth(), stage.getViewport().getWorldHeight());
-        }
     }
 
     @Override
