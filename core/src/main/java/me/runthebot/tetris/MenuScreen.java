@@ -60,7 +60,7 @@ public class MenuScreen implements Screen {
         });
 
         VisTextButton settingsButton = new VisTextButton("Settings");
-        settingsButton.getLabel().setFontScale(1f);
+        settingsButton.getLabel().setFontScale(2f);
         settingsButton.addListener(event -> {
             if (settingsButton.isPressed()) {
                 game.setScreen(new SettingsScreen(game));
@@ -76,8 +76,8 @@ public class MenuScreen implements Screen {
         table.add(menuLabel).padBottom(80f).row();
         table.add(classicPlayButton).width(360).height(90).padBottom(30f).row();
         table.add(sprintPlayButton).width(360).height(90).padBottom(30f).row();
-        table.add(arcadePlayButton).width(360).height(90).padBottom(60f).row();
-        table.add(settingsButton).width(200).height(60).padBottom(10f).row();
+        table.add(arcadePlayButton).width(360).height(90).padBottom(30f).row();
+        table.add(settingsButton).width(360).height(90).padBottom(60f).row();
 
         stage.addActor(table);
     }
