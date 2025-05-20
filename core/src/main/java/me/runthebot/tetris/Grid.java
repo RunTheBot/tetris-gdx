@@ -21,11 +21,13 @@ public class Grid {
         this.colors = new Color[height][width];
     }
 
+    // checks if a cell is occupied
     public boolean isOccupied(int x, int y) {
         if (x < 0 || x >= width || y < 0 || y >= height) return true;
         return cells[y][x];
     }
 
+    // locks a piece on the grid
     public void lockPiece(Piece piece) {
         boolean[][] shape = piece.getGrid();
         Color color = piece.getType().getColor();

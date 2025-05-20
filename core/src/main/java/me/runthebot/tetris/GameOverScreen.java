@@ -22,18 +22,25 @@ public class GameOverScreen implements Screen {
     public void show() {
         ScreenViewport viewport = new ScreenViewport();
         stage = new Stage(viewport);
+        // take user input
         Gdx.input.setInputProcessor(stage);
 
+        // create the main window.
+        // TODO: remove the window part in favor of a table
         VisWindow window = new VisWindow("Game Over");
+        // window settings
         window.setMovable(false);
         window.setResizable(false);
         window.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
         window.setPosition(0, 0);
 
 
-        VisLabel menuLabel = new VisLabel("Tetris");
+        // game over title
+        // TODO: copied from menu screen, refactor to game over
+        VisLabel menuLabel = new VisLabel("Game Over");
         menuLabel.setFontScale(3f);
 
+        // create main table
         Table table = new Table();
         table.setFillParent(true);
         table.add(menuLabel).pad(40).width(300).height(100);

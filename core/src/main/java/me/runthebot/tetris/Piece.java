@@ -22,6 +22,7 @@ public class Piece {
         this.y = 0;
     }
 
+    // allows for block to be moved
     public boolean move(int dx, int dy, Grid field) {
         int newX = x + dx;
         int newY = y + dy;
@@ -33,6 +34,7 @@ public class Piece {
         return false;
     }
 
+    // allows for piece rotation
     public boolean rotate(Grid field) {
         boolean[][] rotated = rotate90(grid);
         if (!collides(x, y, rotated, field)) {
@@ -59,6 +61,7 @@ public class Piece {
         return rowsDropped;
     }
 
+    // check if block collides
     private boolean collides(int tx, int ty, boolean[][] shape, Grid field) {
         for (int row = 0; row < shape.length; row++) {
             for (int col = 0; col < shape[0].length; col++) {
@@ -73,6 +76,7 @@ public class Piece {
         return false;
     }
 
+    // rotate piece 90 degrees
     private boolean[][] rotate90(boolean[][] input) {
         int rows = input.length;
         int cols = input[0].length;
