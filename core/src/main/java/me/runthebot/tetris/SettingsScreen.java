@@ -21,14 +21,17 @@ public class SettingsScreen implements Screen {
 
     @Override
     public void show() {
+        // create the main viewport
         ScreenViewport viewport = new ScreenViewport();
         stage = new Stage(viewport);
+        // take user input
         Gdx.input.setInputProcessor(stage);
 
+        // settings menu title
         VisLabel titleLabel = new VisLabel("Settings");
         titleLabel.setFontScale(2.2f);
 
-        // ARR slider
+        // ARR setting slider
         arrSlider = new VisSlider(0, 100, 1, false);
         arrSlider.setValue(30);
         // TODO: add tooltips?
@@ -39,6 +42,7 @@ public class SettingsScreen implements Screen {
             return false;
         });
 
+        // main table
         Table arrTable = new Table();
         arrTable.add(new VisLabel("Auto Repeat Rate (ARR)")).padRight(18f);
         arrTable.add(arrSlider).width(240);
@@ -48,6 +52,7 @@ public class SettingsScreen implements Screen {
         VisCheckBox animationBox = new VisCheckBox("Display Animations");
         animationBox.setChecked(true);
 
+        // button to go back to the main screen
         VisTextButton backButton = new VisTextButton("Back");
         backButton.addListener(event -> {
             if (backButton.isPressed()) {
@@ -57,10 +62,12 @@ public class SettingsScreen implements Screen {
             return false;
         });
 
+        // create main table
         Table table = new Table();
         table.setFillParent(true);
         table.center();
 
+        // add each element to table and pad each
         table.add(titleLabel).padBottom(48f).row();
         table.add(arrTable).padBottom(32f).row();
         table.add(animationBox).padBottom(48f).row();
@@ -72,6 +79,7 @@ public class SettingsScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        // clear screen and add stage
         ScreenUtils.clear(0.08f, 0.13f, 0.22f, 1);
         stage.act(delta);
         stage.draw();

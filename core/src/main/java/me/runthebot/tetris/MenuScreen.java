@@ -24,11 +24,14 @@ public class MenuScreen implements Screen {
     public void show() {
         ScreenViewport viewport = new ScreenViewport();
         stage = new Stage(viewport);
+        // take input from this screen
         Gdx.input.setInputProcessor(stage);
 
+        // main title
         VisLabel menuLabel = new VisLabel("Tetris");
         menuLabel.setFontScale(3f);
 
+        // button to play classic mode
         VisTextButton classicPlayButton = new VisTextButton("Play Classic");
         classicPlayButton.getLabel().setFontScale(2f);
         classicPlayButton.addListener(event -> {
@@ -39,6 +42,7 @@ public class MenuScreen implements Screen {
             return false;
         });
 
+        // button to play sprint mode
         VisTextButton sprintPlayButton = new VisTextButton("Play Sprint");
         sprintPlayButton.getLabel().setFontScale(2f);
         sprintPlayButton.addListener(event -> {
@@ -49,6 +53,7 @@ public class MenuScreen implements Screen {
             return false;
         });
 
+        // button to play arcade mode
         VisTextButton arcadePlayButton = new VisTextButton("Play Arcade");
         arcadePlayButton.getLabel().setFontScale(2f);
         arcadePlayButton.addListener(event -> {
@@ -59,6 +64,7 @@ public class MenuScreen implements Screen {
             return false;
         });
 
+        // button to open settings menu
         VisTextButton settingsButton = new VisTextButton("Settings");
         settingsButton.getLabel().setFontScale(2f);
         settingsButton.addListener(event -> {
@@ -69,6 +75,7 @@ public class MenuScreen implements Screen {
             return false;
         });
 
+        // button to quit the game
         VisTextButton quitButton = new VisTextButton("Quit");
         quitButton.getLabel().setFontScale(2f);
         quitButton.addListener(event -> {
@@ -80,10 +87,12 @@ public class MenuScreen implements Screen {
         });
 
 
+        // create the main table
         Table table = new Table();
         table.setFillParent(true);
         table.center();
 
+        // add each element to the table, pad each button
         table.add(menuLabel).padBottom(80f).row();
         table.add(classicPlayButton).width(360).height(90).padBottom(30f).row();
         table.add(sprintPlayButton).width(360).height(90).padBottom(30f).row();
@@ -96,6 +105,7 @@ public class MenuScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        // clear screen and render the main stage
         ScreenUtils.clear(0.08f, 0.13f, 0.22f, 1);
         stage.act(delta);
         stage.draw();
