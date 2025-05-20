@@ -69,6 +69,17 @@ public class MenuScreen implements Screen {
             return false;
         });
 
+        VisTextButton quitButton = new VisTextButton("Quit");
+        quitButton.getLabel().setFontScale(2f);
+        quitButton.addListener(event -> {
+            if (quitButton.isPressed()) {
+                Gdx.app.exit(); // quit the app
+                return true;
+            }
+            return false;
+        });
+
+
         Table table = new Table();
         table.setFillParent(true);
         table.center();
@@ -77,7 +88,8 @@ public class MenuScreen implements Screen {
         table.add(classicPlayButton).width(360).height(90).padBottom(30f).row();
         table.add(sprintPlayButton).width(360).height(90).padBottom(30f).row();
         table.add(arcadePlayButton).width(360).height(90).padBottom(30f).row();
-        table.add(settingsButton).width(360).height(90).padBottom(60f).row();
+        table.add(settingsButton).width(360).height(90).padBottom(30f).row();
+        table.add(quitButton).width(360).height(90).padBottom(60f).row();
 
         stage.addActor(table);
     }
