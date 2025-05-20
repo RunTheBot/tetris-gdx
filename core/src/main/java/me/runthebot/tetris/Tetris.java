@@ -24,12 +24,17 @@ public class Tetris extends Game {
         // load UI library
         VisUI.load(VisUI.SkinScale.X1);
 
+        // initialize batch, font, camera
         batch = new SpriteBatch();
         font = new BitmapFont();
         camera = new OrthographicCamera();
+
+        // set up the camera and viewport
         camera.setToOrtho(false, GRID_WIDTH * BLOCK_SIZE, GRID_HEIGHT * BLOCK_SIZE);
         viewport = new FitViewport(GRID_WIDTH * BLOCK_SIZE, GRID_HEIGHT * BLOCK_SIZE, camera); // logical size
         viewport.apply();
+
+        // return the menu screen
         this.setScreen(new MenuScreen(this));
     }
 

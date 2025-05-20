@@ -50,6 +50,7 @@ public enum Tetrimino {
         this.shape = convertToBooleanGrid(shapeLines);
     }
 
+    // grid of booleans to represent the grid blocks
     private boolean[][] convertToBooleanGrid(String[] lines) {
         int rows = lines.length;
         int cols = lines[0].length();
@@ -63,6 +64,7 @@ public enum Tetrimino {
         return grid;
     }
 
+    // visually prints piece as a string
     public String toVisualString() {
         StringBuilder sb = new StringBuilder();
         for (String line : shapeLines) {
