@@ -62,6 +62,39 @@ public class GameScreen implements Screen {
         // Render ghost piece with transparency
         ghostPiece.render(shapeRenderer, 0.3f);  // Pass alpha value for transparency
         currentPiece.render(shapeRenderer);
+
+        // TODO: this does not render because the camera doesnt add stuff that is off grid
+        renderNextPiece();
+
+        shapeRenderer.end();
+    }
+
+    private void renderNextPiece() {
+        if (nextPieces.isEmpty()) return;
+
+        // get the next piece
+        Tetrimino nextPiece = nextPieces.peek();
+
+        boolean[][] shape = nextPiece.getShape();
+        Color color = nextPiece.getColor();
+
+        // preview position
+        float previewX = Tetris.GRID_WIDTH * Tetris.BLOCK_SIZE + Tetris.BUFFER_SIZE;
+        float previewY = Tetris.GRID_HEIGHT * Tetris.BLOCK_SIZE - Tetris.BUFFER_SIZE;
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(color);
+
+        // render the next piece
+        for (int row = 0; row < shape.length; row++) {
+            for (int col = 0; col < shape[row].length; col++) {
+                if (shape[row][col]) {
+                    float blockX = previewX + col * Tetris.BLOCK_SIZE;
+                    float blockY = previewY - row * Tetris.BLOCK_SIZE;
+                    shapeRenderer.rect(blockX, blockY, Tetris.BLOCK_SIZE, Tetris.BLOCK_SIZE);
+                }
+            }
+        }
         shapeRenderer.end();
     }
 
