@@ -24,12 +24,12 @@ public class FallingPiece {
     }
 
     public void update(float delta) {
-        position.add(velocity.x * delta, velocity.y * delta);
+        position.add(0, velocity.y * delta);
         rotation += rotationSpeed * delta;
 
         if (position.y < -Tetris.BLOCK_SIZE * type.getShape().length) {
             position.y = Gdx.graphics.getHeight();
-            position.x = (float) Math.random() * (Gdx.graphics.getWidth() - Tetris.BLOCK_SIZE * type.getShape()[0].length);
+            position.x = Gdx.graphics.getWidth() / 2f + (float) (Math.random() * 200 - 100);
         }
     }
 
@@ -43,8 +43,8 @@ public class FallingPiece {
         for (int row = 0; row < shape.length; row++) {
             for (int col = 0; col < shape[row].length; col++) {
                 if (shape[row][col]) {
-                    float x = position.x + col * Tetris.BLOCK_SIZE * 1.5f;
-                    float y = position.y - row * Tetris.BLOCK_SIZE * 1.5f;
+                    float x = col * Tetris.BLOCK_SIZE * 1.5f;
+                    float y = -row * Tetris.BLOCK_SIZE * 1.5f;
                     renderer.rect(x, y, Tetris.BLOCK_SIZE * 1.5f, Tetris.BLOCK_SIZE * 1.5f);
                 }
             }
