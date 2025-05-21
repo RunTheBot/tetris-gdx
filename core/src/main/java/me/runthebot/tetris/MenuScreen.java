@@ -38,11 +38,11 @@ public class MenuScreen implements Screen {
         shapeRenderer = new ShapeRenderer();
         fallingPieces = new ArrayList<>();
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             Tetrimino type = Tetrimino.values()[(int) (Math.random() * Tetrimino.values().length)];
             Vector2 position = new Vector2((float) Math.random() * Gdx.graphics.getWidth(),
                 (float) Math.random() * Gdx.graphics.getHeight());
-            Vector2 velocity = new Vector2(0, -100); // Falling speed
+            Vector2 velocity = new Vector2(0, -50); // speed
             fallingPieces.add(new FallingPiece(type, position, velocity));
         }
 
