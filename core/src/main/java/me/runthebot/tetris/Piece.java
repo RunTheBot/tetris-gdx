@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import lombok.Getter;
 import lombok.Setter;
 
+import static me.runthebot.tetris.Tetris.BUFFER_SIZE;
+
 @Setter
 @Getter
 public class Piece {
@@ -19,7 +21,7 @@ public class Piece {
         this.type = type;
         this.grid = type.getShape();
         this.x = 3;
-        this.y = 0;
+        this.y = BUFFER_SIZE - 2;
     }
 
     // allows for block to be moved
