@@ -3,6 +3,8 @@ package me.runthebot.tetris;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -12,9 +14,14 @@ import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.kotcrab.vis.ui.widget.VisWindow;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MenuScreen implements Screen {
     private final Tetris game;
     private Stage stage;
+    private ShapeRenderer shapeRenderer;
+    private List<FallingPiece> fallingPieces;
 
     public MenuScreen(final Tetris game) {
         this.game = game;
@@ -26,6 +33,18 @@ public class MenuScreen implements Screen {
         stage = new Stage(viewport);
         // take input from this screen
         Gdx.input.setInputProcessor(stage);
+
+        // shape animations
+        shapeRenderer = new ShapeRenderer();
+        fallingPieces = new ArrayList<>();
+
+        for (int i = 0; i < 10; i++) {
+            Tetrimino type = Tetrimino.values()[(int) (Math.random() * Tetrimino.values().length)];
+            Vector2 position = new Vector2((float) Math.random() * Gdx.graphics.getWidth(),
+                (float) Math.random() * Gdx.graphics.getHeight());
+            Vector2 velocity = new Vector2(0, -100); // Falling speed
+            fallingPieces.add(new FallingPiece(type, position, velocity));
+        }
 
         // main title
         VisLabel menuLabel = new VisLabel("Tetris");
@@ -107,6 +126,15 @@ public class MenuScreen implements Screen {
     public void render(float delta) {
         // clear screen and render the main stage
         ScreenUtils.clear(0.08f, 0.13f, 0.22f, 1);
+
+        // render falling pieces
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        for (FallingPiece piece : fallingPieces) {
+            piece.update(delta);
+            piece.render(shapeRenderer);
+        }
+        shapeRenderer.end();
+
         stage.act(delta);
         stage.draw();
     }
@@ -130,10 +158,13 @@ public class MenuScreen implements Screen {
     @Override
     public void hide() {
         if (stage != null) stage.dispose();
+        // is this needed
+        if (shapeRenderer != null) shapeRenderer.dispose();
     }
 
     @Override
     public void dispose() {
         if (stage != null) stage.dispose();
+        if (shapeRenderer != null) shapeRenderer.dispose();
     }
 }
