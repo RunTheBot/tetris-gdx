@@ -125,7 +125,7 @@ public class MenuScreen implements Screen {
     @Override
     public void render(float delta) {
         // clear screen and render the main stage
-        ScreenUtils.clear(0.08f, 0.13f, 0.22f, 1);
+        ScreenUtils.clear(Color.BLACK);
 
         // render falling pieces
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
