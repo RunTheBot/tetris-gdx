@@ -62,13 +62,9 @@ public class GameScreen implements Screen {
             // Optionally, render the final grid
             grid.render(shapeRenderer);
 
-            // Render "Game Over" text
             shapeRenderer.end();
-            game.batch.begin();
-            game.font.setColor(Color.RED);
-            game.font.getData().setScale(2f);
-            game.font.draw(game.batch, "GAME OVER", 50, Tetris.GRID_HEIGHT * Tetris.BLOCK_SIZE / 2);
-            game.batch.end();
+            game.setScreen(new GameOverScreen(game));
+
             return;
         }
 
@@ -210,7 +206,7 @@ public class GameScreen implements Screen {
             int rowsDropped = currentPiece.hardDrop(grid);
 
             placePiece();
-            
+
             return;
         }
 

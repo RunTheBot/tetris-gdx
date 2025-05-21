@@ -4,15 +4,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisSlider;
+import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.kotcrab.vis.ui.widget.VisWindow;
 
 public class GameOverScreen implements Screen {
     private final Tetris game;
     private Stage stage;
-    private VisWindow window;
 
     public GameOverScreen(final Tetris game) {
         this.game = game;
@@ -25,32 +26,43 @@ public class GameOverScreen implements Screen {
         // take user input
         Gdx.input.setInputProcessor(stage);
 
-        // create the main window.
-        // TODO: remove the window part in favor of a table
-        VisWindow window = new VisWindow("Game Over");
-        // window settings
-        window.setMovable(false);
-        window.setResizable(false);
-        window.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
-        window.setPosition(0, 0);
-
-
         // game over title
         // TODO: copied from menu screen, refactor to game over
         VisLabel menuLabel = new VisLabel("Game Over");
         menuLabel.setFontScale(3f);
 
+        VisTextButton playAgainButton = new VisTextButton("Play Again");
+        playAgainButton.addListener(event -> {
+            if (playAgainButton.isPressed()) {
+                game.setScreen(new GameScreen(game));
+                return true;
+            }
+            return false;
+        });
+
+
+        VisTextButton backButton = new VisTextButton("Back to Menu");
+        backButton.addListener(event -> {
+            if (backButton.isPressed()) {
+                game.setScreen(new MenuScreen(game));
+                return true;
+            }
+            return false;
+        });
+
         // create main table
         Table table = new Table();
         table.setFillParent(true);
-        table.add(menuLabel).pad(40).width(300).height(100);
-        window.add(table).expand().fill();
+        table.add(menuLabel).padBottom(48f).row();
+        table.add(playAgainButton).width(180).height(60).padBottom(24f).row();
+        table.add(backButton).width(180).height(60);
 
-        stage.addActor(window);
+        stage.addActor(table);
     }
 
     @Override
     public void render(float delta) {
+        ScreenUtils.clear(0.08f, 0.13f, 0.22f, 1);
         stage.act(delta);
         stage.draw();
     }
@@ -59,9 +71,6 @@ public class GameOverScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
-        if (window != null) {
-            window.setSize(stage.getViewport().getWorldWidth(), stage.getViewport().getWorldHeight());
-        }
     }
 
     @Override
