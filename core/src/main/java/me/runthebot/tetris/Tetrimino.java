@@ -72,5 +72,35 @@ public enum Tetrimino {
         }
         return sb.toString();
     }
+
+    public boolean[][] getShape() {
+        // Return a deep copy to avoid mutation
+        int rows = shape.length;
+        int cols = shape[0].length;
+        boolean[][] copy = new boolean[rows][cols];
+        for (int i = 0; i < rows; i++)
+            System.arraycopy(shape[i], 0, copy[i], 0, cols);
+        return copy;
+    }
+
+    public boolean[][] getShape(int rotation) {
+        boolean[][] result = getShape();
+        for (int i = 0; i < rotation % 4; i++) {
+            result = rotate90(result);
+        }
+        return result;
+    }
+
+    private boolean[][] rotate90(boolean[][] input) {
+        int rows = input.length;
+        int cols = input[0].length;
+        boolean[][] rotated = new boolean[cols][rows];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                rotated[j][rows - 1 - i] = input[i][j];
+            }
+        }
+        return rotated;
+    }
 }
 

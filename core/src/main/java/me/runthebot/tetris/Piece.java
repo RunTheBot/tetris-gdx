@@ -147,4 +147,9 @@ public class Piece {
         this.grid = newGrid;
         this.rotation = rotation;
     }
+
+    public boolean[][] getShape() {
+        // Assuming you have a Tetrimino type with a getShape(int rotation) method
+        return type.getShape(rotation);
+    }
 }

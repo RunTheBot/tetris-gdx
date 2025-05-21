@@ -36,6 +36,8 @@ public class GameScreen implements Screen {
     private long lastFallTime;
     private float gravity = 0.5f; // Tiles per second
 
+    private boolean gameOver = false; // Track game over state
+
     public GameScreen(final Tetris game) {
         this.game = game;
 
@@ -49,6 +51,27 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        if (gameOver) {
+            // Render game over screen
+            Gdx.gl.glClearColor(0, 0, 0, 1);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+            game.camera.update();
+            shapeRenderer.setProjectionMatrix(game.camera.combined);
+
+            // Optionally, render the final grid
+            grid.render(shapeRenderer);
+
+            // Render "Game Over" text
+            shapeRenderer.end();
+            game.batch.begin();
+            game.font.setColor(Color.RED);
+            game.font.getData().setScale(2f);
+            game.font.draw(game.batch, "GAME OVER", 50, Tetris.GRID_HEIGHT * Tetris.BLOCK_SIZE / 2);
+            game.batch.end();
+            return;
+        }
+
         handleInput();
         update();
 
@@ -118,6 +141,37 @@ public class GameScreen implements Screen {
         currentPiece = new Piece(t);
         ghostPiece = new Piece(t);  // Create ghost piece with the same shape
         updateGhostPiece();  // Position the ghost
+
+        // Game over check: if the new piece collides immediately, game over
+        if (!isValidPosition(currentPiece)) {
+            gameOver = true;
+        }
+    }
+
+    /**
+     * Checks if the piece's current position is valid (not colliding or out of bounds)
+     */
+    private boolean isValidPosition(Piece piece) {
+        boolean[][] shape = piece.getShape();
+        int px = piece.getX();
+        int py = piece.getY();
+        for (int row = 0; row < shape.length; row++) {
+            for (int col = 0; col < shape[row].length; col++) {
+                if (shape[row][col]) {
+                    int x = px + col;
+                    int y = py + row;
+                    // Check bounds
+                    if (x < 0 || x >= Tetris.GRID_WIDTH || y < 0 || y >= Tetris.GRID_HEIGHT) {
+                        return false;
+                    }
+                    // Check collision with locked blocks
+                    if (grid.isOccupied(x, y)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -133,20 +187,30 @@ public class GameScreen implements Screen {
         while (ghostPiece.move(0, 1, grid)) { }
     }
 
+    public void placePiece(){
+        grid.lockPiece(currentPiece);
+
+        // Check for line clears after locking the piece
+        int linesCleared = grid.checkAndClearLines();
+        // TODO: Update score based on linesCleared
+
+        spawnNewPiece();
+
+        // Check for game over condition
+        // (handled in spawnNewPiece)
+    }
+
     private void handleInput() {
+        if (gameOver) return; // Ignore input if game is over
+
         long currentTime = TimeUtils.millis();
 
         // Hard drop (Space key)
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             int rowsDropped = currentPiece.hardDrop(grid);
-            // rowsDropped can be used for scoring in the future
-            grid.lockPiece(currentPiece);
 
-            // Check for line clears after locking the piece
-            int linesCleared = grid.checkAndClearLines();
-            // TODO: Update score based on linesCleared
-
-            spawnNewPiece();
+            placePiece();
+            
             return;
         }
 
@@ -223,16 +287,12 @@ public class GameScreen implements Screen {
     }
 
     private void update() {
+        if (gameOver) return; // Stop updates if game is over
         if (TimeUtils.timeSinceMillis(lastFallTime) > 1000 / gravity) {
             boolean moved = currentPiece.move(0, 1, grid);
             if (!moved) {
-                grid.lockPiece(currentPiece);
-
-                // Also check for line clears here for consistency
-                int linesCleared = grid.checkAndClearLines();
-                // TODO: Update score based on linesCleared
-
-                spawnNewPiece();
+                // If the piece can't move down, place it
+                placePiece();
             }
             lastFallTime = TimeUtils.millis();
         }
