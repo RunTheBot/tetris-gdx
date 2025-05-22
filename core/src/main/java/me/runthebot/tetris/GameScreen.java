@@ -98,8 +98,8 @@ public class GameScreen implements Screen {
         Color color = nextPiece.getColor();
 
         // preview position
-        float previewX = 270;
-        float previewY = 100;
+        float previewX = Tetris.GRID_WIDTH;
+        float previewY = Tetris.GRID_HEIGHT-Tetris.BUFFER_SIZE;
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(color);
