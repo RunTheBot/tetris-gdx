@@ -99,8 +99,8 @@ public class Piece {
                 if (grid[row][col]) {
                     int gx = x + col;
                     int gy = y + row;
-                    renderer.rect(gx * Tetris.BLOCK_SIZE, (Tetris.GRID_HEIGHT - gy - 1) * Tetris.BLOCK_SIZE,
-                        Tetris.BLOCK_SIZE, Tetris.BLOCK_SIZE);
+                    renderer.rect(gx, (Tetris.GRID_HEIGHT - gy - 1),
+                        1, 1);
                 }
             }
         }
@@ -119,10 +119,10 @@ public class Piece {
                 if (grid[row][col]) {
                     int gx = x + col;
                     int gy = y + row;
-                    renderer.rect(gx * Tetris.BLOCK_SIZE,
-                                 (Tetris.GRID_HEIGHT - gy - 1) * Tetris.BLOCK_SIZE,
-                                 Tetris.BLOCK_SIZE,
-                                 Tetris.BLOCK_SIZE);
+                    renderer.rect(gx,
+                                 (Tetris.GRID_HEIGHT - gy - 1),
+                                 1,
+                                 1);
                 }
             }
         }

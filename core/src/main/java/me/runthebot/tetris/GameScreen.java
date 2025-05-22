@@ -108,9 +108,9 @@ public class GameScreen implements Screen {
         for (int row = 0; row < shape.length; row++) {
             for (int col = 0; col < shape[row].length; col++) {
                 if (shape[row][col]) {
-                    float blockX = previewX + col * Tetris.BLOCK_SIZE;
-                    float blockY = previewY - row * Tetris.BLOCK_SIZE;
-                    shapeRenderer.rect(blockX, blockY, Tetris.BLOCK_SIZE, Tetris.BLOCK_SIZE);
+                    float blockX = previewX + col;
+                    float blockY = previewY - row;
+                    shapeRenderer.rect(blockX, blockY, 1, 1);
                 }
             }
         }

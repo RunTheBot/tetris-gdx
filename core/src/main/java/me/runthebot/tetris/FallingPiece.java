@@ -13,6 +13,7 @@ public class FallingPiece {
     private final Color color;
     private float rotation;
     private final float rotationSpeed;
+    private final float BLOCK_SIZE = 32;
 
     public FallingPiece(Tetrimino type, Vector2 position, Vector2 velocity) {
         this.type = type;
@@ -27,7 +28,7 @@ public class FallingPiece {
         position.add(0, velocity.y * delta);
         rotation += rotationSpeed * delta;
 
-        if (position.y < -Tetris.BLOCK_SIZE * type.getShape().length) {
+        if (position.y < -BLOCK_SIZE * type.getShape().length) {
             position.y = Gdx.graphics.getHeight();
             position.x = Gdx.graphics.getWidth() / 2f + (float) (Math.random() * 200 - 100);
         }
@@ -43,9 +44,9 @@ public class FallingPiece {
         for (int row = 0; row < shape.length; row++) {
             for (int col = 0; col < shape[row].length; col++) {
                 if (shape[row][col]) {
-                    float x = col * Tetris.BLOCK_SIZE * 1.5f;
-                    float y = -row * Tetris.BLOCK_SIZE * 1.5f;
-                    renderer.rect(x, y, Tetris.BLOCK_SIZE * 1.5f, Tetris.BLOCK_SIZE * 1.5f);
+                    float x = col * BLOCK_SIZE * 1.5f;
+                    float y = -row * BLOCK_SIZE * 1.5f;
+                    renderer.rect(x, y, BLOCK_SIZE * 1.5f, BLOCK_SIZE * 1.5f);
                 }
             }
         }

@@ -105,12 +105,12 @@ public class Grid {
         renderer.begin(ShapeRenderer.ShapeType.Line);
         renderer.setColor(Color.DARK_GRAY);
         for (int y = 0; y <= height - BUFFER_SIZE; y++) {
-            renderer.line(0, y * Tetris.BLOCK_SIZE,
-                width * Tetris.BLOCK_SIZE, y * Tetris.BLOCK_SIZE);
+            renderer.line(0, y,
+                width, y );
         }
         for (int x = 0; x <= width; x++) {
-            renderer.line(x * Tetris.BLOCK_SIZE, 0,
-                x * Tetris.BLOCK_SIZE, (height - BUFFER_SIZE) * Tetris.BLOCK_SIZE);
+            renderer.line(x, 0,
+                x, (height - BUFFER_SIZE) );
         }
         renderer.end();
 
@@ -120,8 +120,8 @@ public class Grid {
                 if (cells[y][x]) {
                     Color c = colors[y][x] != null ? colors[y][x] : Color.WHITE;
                     renderer.setColor(c);
-                    renderer.rect(x * Tetris.BLOCK_SIZE, (Tetris.GRID_HEIGHT - y - 1) * Tetris.BLOCK_SIZE,
-                        Tetris.BLOCK_SIZE, Tetris.BLOCK_SIZE);
+                    renderer.rect(x, (Tetris.GRID_HEIGHT - y - 1),
+                        1, 1);
                 }
             }
         }
