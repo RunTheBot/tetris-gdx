@@ -31,6 +31,8 @@ public class GameScreen implements Screen {
     private final Grid grid;
     private Piece currentPiece;
     private Piece ghostPiece;  // Ghost piece for landing preview
+    private Piece holdPiece;   // Hold piece
+    private boolean canHold = true;  // Flag to prevent multiple holds per piece
     private Queue<Tetrimino> nextPieces;
 
     private long lastFallTime;
@@ -47,6 +49,9 @@ public class GameScreen implements Screen {
         fillBag(); // Initialize with first bag
         spawnNewPiece();
         lastFallTime = TimeUtils.millis();
+
+        // Center the camera on the grid
+        game.camera.position.x = game.camera.viewportWidth / 2;
     }
 
     @Override
@@ -59,10 +64,11 @@ public class GameScreen implements Screen {
             game.camera.update();
             shapeRenderer.setProjectionMatrix(game.camera.combined);
 
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
             // Optionally, render the final grid
             grid.render(shapeRenderer);
-
             shapeRenderer.end();
+
             game.setScreen(new GameOverScreen(game));
 
             return;
@@ -76,16 +82,24 @@ public class GameScreen implements Screen {
 
         game.camera.update();
         shapeRenderer.setProjectionMatrix(game.camera.combined);
+
+        // Begin shape rendering
+//        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        // Render game elements
         grid.render(shapeRenderer);
 
         // Render ghost piece with transparency
         ghostPiece.render(shapeRenderer, 0.3f);  // Pass alpha value for transparency
         currentPiece.render(shapeRenderer);
 
-        // TODO: this does not render because the camera doesnt add stuff that is off grid
-        renderNextPiece();
-
+        // End shape rendering started in this method
         shapeRenderer.end();
+
+        // Hold and Next pieces have their own begin/end calls
+        renderHoldPiece();
+        renderNextPiece();
+        renderHoldPiece();
     }
 
     private void renderNextPiece() {
@@ -97,19 +111,35 @@ public class GameScreen implements Screen {
         boolean[][] shape = nextPiece.getShape();
         Color color = nextPiece.getColor();
 
-        // preview position
-        float previewX = Tetris.GRID_WIDTH;
-        float previewY = Tetris.GRID_HEIGHT-Tetris.BUFFER_SIZE;
+        // preview position - keep it within camera view (GRID_WIDTH + 1.5 to add a small gap)
+        float previewX = Tetris.GRID_WIDTH + 1.5f;
+        // Position next piece at the top of the visible area
+        float previewY = 2;
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(color);
+
+        // Draw a background rectangle for the next piece area
+        shapeRenderer.setColor(0.2f, 0.2f, 0.2f, 1);
+        shapeRenderer.rect(previewX - 0.25f, 0.25f, 4.5f, 6);
+
+        // Draw "NEXT" text border
+        shapeRenderer.setColor(1, 1, 1, 1);
+        shapeRenderer.rect(previewX - 0.25f, 6.5f, 4.5f, 1);
+
+        // reset to piece color
+        shapeRenderer.setColor(color);
+
+        // Center the piece in the preview area based on its width
+        float offsetX = (4 - shape[0].length) / 2.0f;
+        float offsetY = (4 - shape.length) / 2.0f;
 
         // render the next piece
         for (int row = 0; row < shape.length; row++) {
             for (int col = 0; col < shape[row].length; col++) {
                 if (shape[row][col]) {
-                    float blockX = previewX + col;
-                    float blockY = previewY - row;
+                    float blockX = previewX + col + offsetX;
+                    float blockY = previewY + row + offsetY;
                     shapeRenderer.rect(blockX, blockY, 1, 1);
                 }
             }
@@ -187,10 +217,13 @@ public class GameScreen implements Screen {
         grid.lockPiece(currentPiece);
 
         // Check for line clears after locking the piece
-        int linesCleared = grid.checkAndClearLines();
-        // TODO: Update score based on linesCleared
+        grid.checkAndClearLines();
+        // TODO: Uncomment when score system is implemented
+        // int linesCleared = grid.checkAndClearLines();
+        // Update score based on linesCleared
 
         spawnNewPiece();
+        canHold = true; // Reset the hold flag after placing a piece
 
         // Check for game over condition
         // (handled in spawnNewPiece)
@@ -200,6 +233,12 @@ public class GameScreen implements Screen {
         if (gameOver) return; // Ignore input if game is over
 
         long currentTime = TimeUtils.millis();
+
+        // Hold piece (Shift key)
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_RIGHT)) {
+            holdPiece();
+            return;
+        }
 
         // Hard drop (Space key)
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
@@ -280,6 +319,11 @@ public class GameScreen implements Screen {
                 updateGhostPiece();
             }
         }
+
+        // Hold piece (C key)
+        if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
+            holdPiece();
+        }
     }
 
     private void update() {
@@ -292,6 +336,86 @@ public class GameScreen implements Screen {
             }
             lastFallTime = TimeUtils.millis();
         }
+    }
+
+    /**
+     * Holds the current piece, allowing the player to swap it with the next piece.
+     * The held piece is stored in the holdPiece variable, and the current piece is replaced
+     * by a new piece from the nextPieces queue.
+     */    private void holdPiece() {
+        if (!canHold) return; // Can't hold twice in a row
+
+        Tetrimino currentType = currentPiece.getType();
+
+        if (holdPiece == null) {
+            // First hold - no piece to swap
+            holdPiece = new Piece(currentType);
+            spawnNewPiece();
+        } else {
+            // Swap pieces
+            Tetrimino holdType = holdPiece.getType();
+            holdPiece = new Piece(currentType);
+            currentPiece = new Piece(holdType);
+            // Reset rotation and position for piece coming from hold
+            currentPiece.setPosition(3, Tetris.BUFFER_SIZE - 2);
+            ghostPiece = new Piece(holdType);
+            updateGhostPiece();
+        }
+
+        canHold = false; // Prevent holding again until next piece
+    }
+
+    /**
+     * Renders the hold piece
+     */
+    private void renderHoldPiece() {
+        if (holdPiece == null) return;
+
+        boolean[][] shape = holdPiece.getType().getShape();
+        Color color = holdPiece.getType().getColor();
+
+        // Hold position - on the left side of the grid
+        float holdX = -3.5f;
+        float holdY = 2;
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        // Draw a background rectangle for the hold piece area
+        shapeRenderer.setColor(0.2f, 0.2f, 0.2f, 1);
+        shapeRenderer.rect(holdX - 0.25f, 0.25f, 4.5f, 6);
+
+        // Draw "HOLD" text border
+        shapeRenderer.setColor(1, 1, 1, 1);
+        shapeRenderer.rect(holdX - 0.25f, 6.5f, 4.5f, 1);
+
+        // Optional: Add "HOLD" text (if you have a text rendering capability)
+        // font.draw(batch, "HOLD", holdX + 1.5f, 7.2f);
+
+        // Set color to piece color (dimmed if can't hold)
+        if (canHold) {
+            shapeRenderer.setColor(color);
+        } else {
+            // Dimmed version of the color
+            Color dimmed = new Color(color);
+            dimmed.a = 0.5f;
+            shapeRenderer.setColor(dimmed);
+        }
+
+        // Center the piece in the hold area based on its width
+        float offsetX = (4 - shape[0].length) / 2.0f;
+        float offsetY = (4 - shape.length) / 2.0f;
+
+        // Render the hold piece
+        for (int row = 0; row < shape.length; row++) {
+            for (int col = 0; col < shape[row].length; col++) {
+                if (shape[row][col]) {
+                    float blockX = holdX + col + offsetX;
+                    float blockY = holdY + row + offsetY;
+                    shapeRenderer.rect(blockX, blockY, 1, 1);
+                }
+            }
+        }
+        shapeRenderer.end();
     }
 
     @Override public void show() {}
