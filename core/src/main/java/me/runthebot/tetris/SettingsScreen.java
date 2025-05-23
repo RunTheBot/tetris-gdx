@@ -36,7 +36,7 @@ public class SettingsScreen implements Screen {
         VisLabel titleLabel = new VisLabel("Settings");
         titleLabel.setFontScale(2.2f);
 
-        dasSlider = new VisSlider(0, 200, 1, false);
+        dasSlider = new VisSlider(0, 500, 1, false);
         dasSlider.setValue(config.DAS_DELAY);
         dasValueLabel = new VisLabel("DAS: " + dasSlider.getValue());
         dasSlider.addListener(event -> {
@@ -47,7 +47,7 @@ public class SettingsScreen implements Screen {
 
 
         // ARR setting slider
-        arrSlider = new VisSlider(0, 200, 1, false);
+        arrSlider = new VisSlider(0, 500, 1, false);
         arrSlider.setValue(config.ARR_DELAY);
         // TODO: add tooltips?
         arrValueLabel = new VisLabel("ARR: " + arrSlider.getValue());
