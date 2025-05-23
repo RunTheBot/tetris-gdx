@@ -13,6 +13,8 @@ public class SettingsScreen implements Screen {
     private final ConfigManager configManager;
     private final GameConfig config;
     private Stage stage;
+    private VisSlider dasSlider;
+    private VisLabel dasValueLabel;
     private VisSlider arrSlider;
     private VisLabel arrValueLabel;
 
@@ -34,9 +36,19 @@ public class SettingsScreen implements Screen {
         VisLabel titleLabel = new VisLabel("Settings");
         titleLabel.setFontScale(2.2f);
 
+        dasSlider = new VisSlider(0, 200, 1, false);
+        dasSlider.setValue(config.DAS_DELAY);
+        dasValueLabel = new VisLabel("DAS: " + dasSlider.getValue());
+        dasSlider.addListener(event -> {
+            config.DAS_DELAY = (int) dasSlider.getValue();
+            dasValueLabel.setText("DAS: " + config.DAS_DELAY);
+            return false;
+        });
+
+
         // ARR setting slider
-        arrSlider = new VisSlider(0, 100, 1, false);
-        arrSlider.setValue(30);
+        arrSlider = new VisSlider(0, 200, 1, false);
+        arrSlider.setValue(config.ARR_DELAY);
         // TODO: add tooltips?
         arrValueLabel = new VisLabel("ARR: " + arrSlider.getValue());
         arrSlider.addListener(event -> {
@@ -44,6 +56,12 @@ public class SettingsScreen implements Screen {
             arrValueLabel.setText("ARR: " + config.ARR_DELAY);
             return false;
         });
+
+        Table dasTable = new Table();
+        dasTable.add(new VisLabel("DAS: " + config.DAS_DELAY)).padRight(18f);
+        dasTable.add(dasSlider).width(240);
+        dasTable.add(dasValueLabel).width(70).padLeft(8f);
+
 
         // main table
         Table arrTable = new Table();
@@ -75,6 +93,7 @@ public class SettingsScreen implements Screen {
 
         // add each element to table and pad each
         table.add(titleLabel).padBottom(48f).row();
+        table.add(dasTable).padBottom(32f).row();
         table.add(arrTable).padBottom(32f).row();
         table.add(animationBox).padBottom(48f).row();
         table.add(backButton).width(180).height(60);
