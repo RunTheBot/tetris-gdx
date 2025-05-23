@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -49,6 +50,8 @@ public class MenuScreen implements Screen {
         // main title
         VisLabel menuLabel = new VisLabel("Tetris");
         menuLabel.setFontScale(3f);
+        menuLabel.getColor().a = 0;
+        menuLabel.addAction(Actions.fadeIn(1f));
 
         // button to play classic mode
         VisTextButton classicPlayButton = new VisTextButton("Play Classic");
@@ -105,6 +108,17 @@ public class MenuScreen implements Screen {
             return false;
         });
 
+        classicPlayButton.getColor().a = 0;
+        sprintPlayButton.getColor().a = 0;
+        arcadePlayButton.getColor().a = 0;
+        settingsButton.getColor().a = 0;
+        quitButton.getColor().a = 0;
+
+        classicPlayButton.addAction(Actions.sequence(Actions.delay(0.5f), Actions.fadeIn(1f)));
+        sprintPlayButton.addAction(Actions.sequence(Actions.delay(1f), Actions.fadeIn(1f)));
+        arcadePlayButton.addAction(Actions.sequence(Actions.delay(1.5f), Actions.fadeIn(1f)));
+        settingsButton.addAction(Actions.sequence(Actions.delay(2f), Actions.fadeIn(1f)));
+        quitButton.addAction(Actions.sequence(Actions.delay(2.5f), Actions.fadeIn(1f)));
 
         // create the main table
         Table table = new Table();
