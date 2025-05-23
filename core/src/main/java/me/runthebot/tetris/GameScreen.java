@@ -50,8 +50,7 @@ public class GameScreen implements Screen {
         spawnNewPiece();
         lastFallTime = TimeUtils.millis();
 
-        // Center the camera on the grid
-        game.camera.position.x = game.camera.viewportWidth / 2;
+        // We don't need to manually set camera position, the viewport handles it
     }
 
     @Override
@@ -99,7 +98,6 @@ public class GameScreen implements Screen {
         // Hold and Next pieces have their own begin/end calls
         renderHoldPiece();
         renderNextPiece();
-        renderHoldPiece();
     }
 
     private void renderNextPiece() {
@@ -111,8 +109,10 @@ public class GameScreen implements Screen {
         boolean[][] shape = nextPiece.getShape();
         Color color = nextPiece.getColor();
 
-        // preview position - keep it within camera view (GRID_WIDTH + 1.5 to add a small gap)
-        float previewX = Tetris.GRID_WIDTH + 1.5f;
+        // Next piece position - on the right side of the grid
+        float gridOffset = 5.0f;
+        float gridCenterX = gridOffset + Tetris.GRID_WIDTH / 2.0f; // Center of the grid with offset
+        float previewX = gridCenterX + 5.0f; // Position right of the grid
         // Position next piece at the top of the visible area
         float previewY = 2;
 
@@ -126,6 +126,24 @@ public class GameScreen implements Screen {
         // Draw "NEXT" text border
         shapeRenderer.setColor(1, 1, 1, 1);
         shapeRenderer.rect(previewX - 0.25f, 6.5f, 4.5f, 1);
+
+        // Draw "NEXT" text using shapes
+        shapeRenderer.setColor(0, 0, 0, 1);
+        // N
+        shapeRenderer.rectLine(previewX + 0.5f, 7.0f, previewX + 0.5f, 7.35f, 0.15f);
+        shapeRenderer.rectLine(previewX + 0.5f, 7.35f, previewX + 1.0f, 7.0f, 0.15f);
+        shapeRenderer.rectLine(previewX + 1.0f, 7.0f, previewX + 1.0f, 7.35f, 0.15f);
+        // E
+        shapeRenderer.rectLine(previewX + 1.3f, 7.0f, previewX + 1.3f, 7.35f, 0.15f);
+        shapeRenderer.rectLine(previewX + 1.3f, 7.0f, previewX + 1.8f, 7.0f, 0.15f);
+        shapeRenderer.rectLine(previewX + 1.3f, 7.2f, previewX + 1.7f, 7.2f, 0.15f);
+        shapeRenderer.rectLine(previewX + 1.3f, 7.35f, previewX + 1.8f, 7.35f, 0.15f);
+        // X
+        shapeRenderer.rectLine(previewX + 2.1f, 7.0f, previewX + 2.6f, 7.35f, 0.15f);
+        shapeRenderer.rectLine(previewX + 2.1f, 7.35f, previewX + 2.6f, 7.0f, 0.15f);
+        // T
+        shapeRenderer.rectLine(previewX + 2.9f, 7.35f, previewX + 3.4f, 7.35f, 0.15f);
+        shapeRenderer.rectLine(previewX + 3.15f, 7.35f, previewX + 3.15f, 7.0f, 0.15f);
 
         // reset to piece color
         shapeRenderer.setColor(color);
@@ -242,7 +260,7 @@ public class GameScreen implements Screen {
 
         // Hard drop (Space key)
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            int rowsDropped = currentPiece.hardDrop(grid);
+            currentPiece.hardDrop(grid); // No need to store the return value
 
             placePiece();
 
@@ -375,21 +393,38 @@ public class GameScreen implements Screen {
         Color color = holdPiece.getType().getColor();
 
         // Hold position - on the left side of the grid
-        float holdX = -3.5f;
+        float gridOffset = 5.0f;
+        float gridCenterX = gridOffset + Tetris.GRID_WIDTH / 2.0f; // Center of the grid with offset
+        float holdX = gridCenterX - 9.0f; // Position left of the grid
         float holdY = 2;
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         // Draw a background rectangle for the hold piece area
         shapeRenderer.setColor(0.2f, 0.2f, 0.2f, 1);
-        shapeRenderer.rect(holdX - 0.25f, 0.25f, 4.5f, 6);
-
-        // Draw "HOLD" text border
+        shapeRenderer.rect(holdX - 0.25f, 0.25f, 4.5f, 6);        // Draw "HOLD" text border
         shapeRenderer.setColor(1, 1, 1, 1);
         shapeRenderer.rect(holdX - 0.25f, 6.5f, 4.5f, 1);
-
-        // Optional: Add "HOLD" text (if you have a text rendering capability)
-        // font.draw(batch, "HOLD", holdX + 1.5f, 7.2f);
+        
+        // Draw "HOLD" text using shapes
+        shapeRenderer.setColor(0, 0, 0, 1);
+        // H
+        shapeRenderer.rectLine(holdX + 0.5f, 7.0f, holdX + 0.5f, 7.35f, 0.15f);
+        shapeRenderer.rectLine(holdX + 0.5f, 7.2f, holdX + 1.0f, 7.2f, 0.15f);
+        shapeRenderer.rectLine(holdX + 1.0f, 7.0f, holdX + 1.0f, 7.35f, 0.15f);
+        // O
+        shapeRenderer.rectLine(holdX + 1.3f, 7.0f, holdX + 1.3f, 7.35f, 0.15f);
+        shapeRenderer.rectLine(holdX + 1.3f, 7.0f, holdX + 1.8f, 7.0f, 0.15f);
+        shapeRenderer.rectLine(holdX + 1.8f, 7.0f, holdX + 1.8f, 7.35f, 0.15f);
+        shapeRenderer.rectLine(holdX + 1.3f, 7.35f, holdX + 1.8f, 7.35f, 0.15f);
+        // L
+        shapeRenderer.rectLine(holdX + 2.1f, 7.0f, holdX + 2.1f, 7.35f, 0.15f);
+        shapeRenderer.rectLine(holdX + 2.1f, 7.0f, holdX + 2.6f, 7.0f, 0.15f);
+        // D
+        shapeRenderer.rectLine(holdX + 2.9f, 7.0f, holdX + 2.9f, 7.35f, 0.15f);
+        shapeRenderer.rectLine(holdX + 2.9f, 7.0f, holdX + 3.3f, 7.1f, 0.15f);
+        shapeRenderer.rectLine(holdX + 3.3f, 7.1f, holdX + 3.3f, 7.25f, 0.15f);
+        shapeRenderer.rectLine(holdX + 3.3f, 7.25f, holdX + 2.9f, 7.35f, 0.15f);
 
         // Set color to piece color (dimmed if can't hold)
         if (canHold) {

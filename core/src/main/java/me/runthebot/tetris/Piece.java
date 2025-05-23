@@ -92,12 +92,15 @@ public class Piece {
     }
 
     public void render(ShapeRenderer renderer) {
+        // Use the same offset as the grid for consistency
+        float offset = 5.0f;
+        
         renderer.begin(ShapeRenderer.ShapeType.Filled);
         renderer.setColor(getType().getColor());
         for (int row = 0; row < grid.length; row++) {
             for (int col = 0; col < grid[0].length; col++) {
                 if (grid[row][col]) {
-                    int gx = x + col;
+                    float gx = x + col + offset;
                     int gy = y + row;
                     renderer.rect(gx, (Tetris.GRID_HEIGHT - gy - 1),
                         1, 1);
@@ -109,6 +112,9 @@ public class Piece {
 
     // Method to render with transparency
     public void render(ShapeRenderer renderer, float alpha) {
+        // Use the same offset as the grid for consistency
+        float offset = 5.0f;
+        
         renderer.begin(ShapeRenderer.ShapeType.Filled);
         // Use white/gray color for ghost piece instead of transparent version of piece color
         Color ghostColor = new Color(0.8f, 0.8f, 0.8f, alpha);
@@ -117,7 +123,7 @@ public class Piece {
         for (int row = 0; row < grid.length; row++) {
             for (int col = 0; col < grid[0].length; col++) {
                 if (grid[row][col]) {
-                    int gx = x + col;
+                    float gx = x + col + offset;
                     int gy = y + row;
                     renderer.rect(gx,
                                  (Tetris.GRID_HEIGHT - gy - 1),

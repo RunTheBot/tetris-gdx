@@ -30,8 +30,10 @@ public class Tetris extends Game {
         camera = new OrthographicCamera();
 
         // set up the camera and viewport (wider to accommodate both hold and next pieces)
-        camera.setToOrtho(false, GRID_WIDTH*2.5f, (GRID_HEIGHT - BUFFER_SIZE + 2));
-        viewport = new FitViewport(GRID_WIDTH*2.5f, (GRID_HEIGHT - BUFFER_SIZE + 2), camera); // logical size
+        float viewportWidth = GRID_WIDTH * 2.5f;  
+        float viewportHeight = (GRID_HEIGHT - BUFFER_SIZE + 2);
+        camera.setToOrtho(false, viewportWidth, viewportHeight);
+        viewport = new FitViewport(viewportWidth, viewportHeight, camera); // logical size
         viewport.apply();
 
         // return the menu screen

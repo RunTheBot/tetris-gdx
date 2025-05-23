@@ -102,15 +102,24 @@ public class Grid {
 
     public void render(ShapeRenderer renderer) {
         // Draw grid lines
+        // Calculate offset to center the grid
+        float offset = 5.0f;
+        
+        // Draw border around the play area
+        renderer.begin(ShapeRenderer.ShapeType.Filled);
+        renderer.setColor(0.3f, 0.3f, 0.3f, 1);
+        renderer.rect(offset - 0.25f, -0.25f, width + 0.5f, (height - BUFFER_SIZE) + 0.5f);
+        renderer.end();
+        
         renderer.begin(ShapeRenderer.ShapeType.Line);
         renderer.setColor(Color.DARK_GRAY);
         for (int y = 0; y <= height - BUFFER_SIZE; y++) {
-            renderer.line(0, y,
-                width, y );
+            renderer.line(offset, y,
+                width + offset, y );
         }
         for (int x = 0; x <= width; x++) {
-            renderer.line(x, 0,
-                x, (height - BUFFER_SIZE) );
+            renderer.line(x + offset, 0,
+                x + offset, (height - BUFFER_SIZE) );
         }
         renderer.end();
 
@@ -120,7 +129,7 @@ public class Grid {
                 if (cells[y][x]) {
                     Color c = colors[y][x] != null ? colors[y][x] : Color.WHITE;
                     renderer.setColor(c);
-                    renderer.rect(x, (Tetris.GRID_HEIGHT - y - 1),
+                    renderer.rect(x + offset, (Tetris.GRID_HEIGHT - y - 1),
                         1, 1);
                 }
             }
