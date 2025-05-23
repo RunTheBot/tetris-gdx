@@ -10,13 +10,16 @@ import com.kotcrab.vis.ui.widget.*;
 
 public class SettingsScreen implements Screen {
     private final Tetris game;
+    private final ConfigManager configManager;
+    private final GameConfig config;
     private Stage stage;
-    // does this need to be a field
     private VisSlider arrSlider;
     private VisLabel arrValueLabel;
 
     public SettingsScreen(final Tetris game) {
         this.game = game;
+        this.configManager = ConfigManager.getInstance();
+        this.config = configManager.getConfig();
     }
 
     @Override
@@ -37,8 +40,8 @@ public class SettingsScreen implements Screen {
         // TODO: add tooltips?
         arrValueLabel = new VisLabel("ARR: " + arrSlider.getValue());
         arrSlider.addListener(event -> {
-            arrValueLabel.setText("ARR: " + arrSlider.getValue());
-            // or true
+            config.ARR_DELAY = (int) arrSlider.getValue();
+            arrValueLabel.setText("ARR: " + config.ARR_DELAY);
             return false;
         });
 
@@ -51,6 +54,9 @@ public class SettingsScreen implements Screen {
         // animation
         VisCheckBox animationBox = new VisCheckBox("Display Animations");
         animationBox.setChecked(true);
+
+        VisCheckBox showGhostPiece = new VisCheckBox("Show Ghost Pieces");
+        showGhostPiece.setChecked(true);
 
         // button to go back to the main screen
         VisTextButton backButton = new VisTextButton("Back");
@@ -103,6 +109,7 @@ public class SettingsScreen implements Screen {
 
     @Override
     public void hide() {
+        configManager.saveConfig();
         if (stage != null) stage.dispose();
     }
 

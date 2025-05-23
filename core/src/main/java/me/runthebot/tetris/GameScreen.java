@@ -16,9 +16,9 @@ import java.util.*;
 public class GameScreen implements Screen {
     final Tetris game;
 
-    // DAS and ARR constants (in milliseconds)
-    private static final long DAS_DELAY = 170; // Delayed Auto Shift initial delay
-    private static final long ARR_DELAY = 30;  // Auto Repeat Rate delay
+
+    ConfigManager configManager = ConfigManager.getInstance();
+    GameConfig config = configManager.getConfig();
 
     // Track key press times and last move times
     private long leftPressTime = 0;
@@ -287,7 +287,7 @@ public class GameScreen implements Screen {
                 long elapsedSinceLastMove = currentTime - lastLeftMoveTime;
 
                 // If we've passed the DAS delay, move all the way to the left edge
-                if (elapsedSincePress > DAS_DELAY && elapsedSinceLastMove >= ARR_DELAY) {
+                if (elapsedSincePress > config.DAS_DELAY && elapsedSinceLastMove >= config.ARR_DELAY) {
                     boolean moved = false;
                     // Move all the way to the left until it can't move anymore
                     while (currentPiece.move(-1, 0, grid)) {
@@ -315,7 +315,7 @@ public class GameScreen implements Screen {
                 long elapsedSinceLastMove = currentTime - lastRightMoveTime;
 
                 // If we've passed the DAS delay and it's time for ARR movement
-                if (elapsedSincePress > DAS_DELAY && elapsedSinceLastMove >= ARR_DELAY) {
+                if (elapsedSincePress > config.DAS_DELAY && elapsedSinceLastMove >= config.ARR_DELAY) {
                     boolean moved = false;
                     // Move all the way to the right until it can't move anymore
                     while (currentPiece.move(1, 0, grid)) {
