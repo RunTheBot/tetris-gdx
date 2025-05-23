@@ -63,10 +63,8 @@ public class GameScreen implements Screen {
             game.camera.update();
             shapeRenderer.setProjectionMatrix(game.camera.combined);
 
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
             // Optionally, render the final grid
             grid.render(shapeRenderer);
-            shapeRenderer.end();
 
             game.setScreen(new GameOverScreen(game));
 
@@ -110,7 +108,7 @@ public class GameScreen implements Screen {
         Color color = nextPiece.getColor();
 
         // Next piece position - on the right side of the grid
-        float gridOffset = 5.0f;
+        float gridOffset = Grid.CENTER_OFFSET;
         float gridCenterX = gridOffset + Tetris.GRID_WIDTH / 2.0f; // Center of the grid with offset
         float previewX = gridCenterX + 5.0f; // Position right of the grid
         // Position next piece at the top of the visible area
@@ -393,7 +391,7 @@ public class GameScreen implements Screen {
         Color color = holdPiece.getType().getColor();
 
         // Hold position - on the left side of the grid
-        float gridOffset = 5.0f;
+        float gridOffset = Grid.CENTER_OFFSET     ;
         float gridCenterX = gridOffset + Tetris.GRID_WIDTH / 2.0f; // Center of the grid with offset
         float holdX = gridCenterX - 9.0f; // Position left of the grid
         float holdY = 2;
@@ -405,7 +403,7 @@ public class GameScreen implements Screen {
         shapeRenderer.rect(holdX - 0.25f, 0.25f, 4.5f, 6);        // Draw "HOLD" text border
         shapeRenderer.setColor(1, 1, 1, 1);
         shapeRenderer.rect(holdX - 0.25f, 6.5f, 4.5f, 1);
-        
+
         // Draw "HOLD" text using shapes
         shapeRenderer.setColor(0, 0, 0, 1);
         // H

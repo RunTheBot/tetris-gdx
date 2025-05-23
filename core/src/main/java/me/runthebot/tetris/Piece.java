@@ -78,6 +78,9 @@ public class Piece {
         return false;
     }
 
+    // Use the same offset as the grid for consistency
+    float offset = Grid.CENTER_OFFSET;
+
     // rotate piece 90 degrees
     private boolean[][] rotate90(boolean[][] input) {
         int rows = input.length;
@@ -92,9 +95,7 @@ public class Piece {
     }
 
     public void render(ShapeRenderer renderer) {
-        // Use the same offset as the grid for consistency
-        float offset = 5.0f;
-        
+
         renderer.begin(ShapeRenderer.ShapeType.Filled);
         renderer.setColor(getType().getColor());
         for (int row = 0; row < grid.length; row++) {
@@ -112,9 +113,7 @@ public class Piece {
 
     // Method to render with transparency
     public void render(ShapeRenderer renderer, float alpha) {
-        // Use the same offset as the grid for consistency
-        float offset = 5.0f;
-        
+
         renderer.begin(ShapeRenderer.ShapeType.Filled);
         // Use white/gray color for ghost piece instead of transparent version of piece color
         Color ghostColor = new Color(0.8f, 0.8f, 0.8f, alpha);

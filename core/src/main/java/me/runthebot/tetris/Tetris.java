@@ -12,6 +12,8 @@ public class Tetris extends Game {
     public static final int GRID_WIDTH = 10;
     public static final int BUFFER_SIZE = 20;
     public static final int GRID_HEIGHT = 20 + BUFFER_SIZE;
+    public static float VIEWPORT_WIDTH = GRID_WIDTH * 2.5f;
+    public static float VIEWPOET_HEIGHT = (GRID_HEIGHT - BUFFER_SIZE + 2);
 //    public static final int BLOCK_SIZE = 30;
 
     public SpriteBatch batch;
@@ -30,10 +32,8 @@ public class Tetris extends Game {
         camera = new OrthographicCamera();
 
         // set up the camera and viewport (wider to accommodate both hold and next pieces)
-        float viewportWidth = GRID_WIDTH * 2.5f;  
-        float viewportHeight = (GRID_HEIGHT - BUFFER_SIZE + 2);
-        camera.setToOrtho(false, viewportWidth, viewportHeight);
-        viewport = new FitViewport(viewportWidth, viewportHeight, camera); // logical size
+        camera.setToOrtho(false, VIEWPORT_WIDTH, VIEWPOET_HEIGHT);
+        viewport = new FitViewport(VIEWPORT_WIDTH, VIEWPOET_HEIGHT, camera); // logical size
         viewport.apply();
 
         // return the menu screen
