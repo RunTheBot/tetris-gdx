@@ -58,7 +58,7 @@ public class SettingsScreen implements Screen {
         });
 
         Table dasTable = new Table();
-        dasTable.add(new VisLabel("DAS: " + config.DAS_DELAY)).padRight(18f);
+        dasTable.add(new VisLabel("Delayed Auto Shift (DAS)")).padRight(18f);
         dasTable.add(dasSlider).width(240);
         dasTable.add(dasValueLabel).width(70).padLeft(8f);
 
@@ -74,7 +74,11 @@ public class SettingsScreen implements Screen {
         animationBox.setChecked(true);
 
         VisCheckBox showGhostPiece = new VisCheckBox("Show Ghost Pieces");
-        showGhostPiece.setChecked(true);
+        showGhostPiece.setChecked(config.showGhostPiece);
+        showGhostPiece.addListener(event -> {
+            config.showGhostPiece = showGhostPiece.isChecked();
+            return false;
+        });
 
         // button to go back to the main screen
         VisTextButton backButton = new VisTextButton("Back");
@@ -95,7 +99,8 @@ public class SettingsScreen implements Screen {
         table.add(titleLabel).padBottom(48f).row();
         table.add(dasTable).padBottom(32f).row();
         table.add(arrTable).padBottom(32f).row();
-        table.add(animationBox).padBottom(48f).row();
+        table.add(animationBox).padBottom(32f).row();
+        table.add(showGhostPiece).padBottom(32f).row();
         table.add(backButton).width(180).height(60);
 
         stage.addActor(table);

@@ -86,8 +86,11 @@ public class GameScreen implements Screen {
         // Render game elements
         grid.render(shapeRenderer);
 
-        // Render ghost piece with transparency
-        ghostPiece.render(shapeRenderer, 0.3f);  // Pass alpha value for transparency
+        if (config.showGhostPiece) {
+            // Render ghost piece with transparency
+            ghostPiece.render(shapeRenderer, 0.3f);  // Pass alpha value for transparency
+        }
+
         currentPiece.render(shapeRenderer);
 
         // End shape rendering started in this method
@@ -182,6 +185,7 @@ public class GameScreen implements Screen {
         Tetrimino t = nextPieces.poll();
         currentPiece = new Piece(t);
         ghostPiece = new Piece(t);  // Create ghost piece with the same shape
+
         updateGhostPiece();  // Position the ghost
 
         // Game over check: if the new piece collides immediately, game over

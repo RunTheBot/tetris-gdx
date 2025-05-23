@@ -1,3 +1,3 @@
-DAS_DAY=200.0
+DAS_DAY=170.0
 ARR_DELAY=200.0
 showGhostPiece=true
