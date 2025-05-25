@@ -69,7 +69,7 @@ public class MenuScreen implements Screen {
         sprintPlayButton.getLabel().setFontScale(2f);
         sprintPlayButton.addListener(event -> {
             if (sprintPlayButton.isPressed()) {
-                game.setScreen(new GameScreen(game));
+                game.setScreen(new SprintScreen(game));
                 return true;
             }
             return false;
