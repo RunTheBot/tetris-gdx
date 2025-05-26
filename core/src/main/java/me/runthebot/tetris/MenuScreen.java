@@ -80,7 +80,7 @@ public class MenuScreen implements Screen {
         arcadePlayButton.getLabel().setFontScale(2f);
         arcadePlayButton.addListener(event -> {
             if (arcadePlayButton.isPressed()) {
-                game.setScreen(new GameScreen(game));
+                game.setScreen(new ArcadeScreen(game));
                 return true;
             }
             return false;

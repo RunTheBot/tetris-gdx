@@ -94,6 +94,40 @@ public class Piece {
         return rotated;
     }
 
+    // Convert from piece coordinates to rendering coordinates
+    public float getRenderX(int col) {
+        return x + col + offset;
+    }
+
+    public float getRenderY(int row) {
+        return (Tetris.GRID_HEIGHT - (y + row) - 1);
+    }
+
+    // Convert from rendering coordinates to piece coordinates
+    public int getGameX(float renderX) {
+        return (int) (renderX - offset);
+    }
+
+    public int getGameY(float renderY) {
+        return Tetris.GRID_HEIGHT - (int) renderY - 1;
+    }
+
+    // Check if a point (in game coordinates) is inside this piece
+    public boolean contains(int pointX, int pointY) {
+        // Convert to piece-relative coordinates
+        int relativeX = pointX - x;
+        int relativeY = pointY - y;
+
+        // Check if within piece bounds
+        if (relativeX < 0 || relativeX >= grid[0].length ||
+            relativeY < 0 || relativeY >= grid.length) {
+            return false;
+        }
+
+        // Check if this cell of the piece is filled
+        return grid[relativeY][relativeX];
+    }
+
     public void render(ShapeRenderer renderer) {
 
         renderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -101,10 +135,9 @@ public class Piece {
         for (int row = 0; row < grid.length; row++) {
             for (int col = 0; col < grid[0].length; col++) {
                 if (grid[row][col]) {
-                    float gx = x + col + offset;
-                    int gy = y + row;
-                    renderer.rect(gx, (Tetris.GRID_HEIGHT - gy - 1),
-                        1, 1);
+                    float gx = getRenderX(col);
+                    float gy = getRenderY(row);
+                    renderer.rect(gx, gy, 1, 1);
                 }
             }
         }
@@ -122,12 +155,9 @@ public class Piece {
         for (int row = 0; row < grid.length; row++) {
             for (int col = 0; col < grid[0].length; col++) {
                 if (grid[row][col]) {
-                    float gx = x + col + offset;
-                    int gy = y + row;
-                    renderer.rect(gx,
-                                 (Tetris.GRID_HEIGHT - gy - 1),
-                                 1,
-                                 1);
+                    float gx = getRenderX(col);
+                    float gy = getRenderY(row);
+                    renderer.rect(gx, gy, 1, 1);
                 }
             }
         }
