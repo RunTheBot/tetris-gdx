@@ -66,7 +66,7 @@ public class GameScreen implements Screen {
             // Optionally, render the final grid
             grid.render(shapeRenderer);
 
-            game.setScreen(new GameOverScreen(game));
+            game.setScreen(new GameOverScreen(game, "classic"));
 
             return;
         }
