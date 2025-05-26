@@ -12,9 +12,6 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
 import java.util.*;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Random;
 
 public class ArcadeScreen implements Screen {
     final Tetris game;
@@ -39,11 +36,13 @@ public class ArcadeScreen implements Screen {
     private Queue<Tetrimino> nextPieces;
 
     private long lastFallTime;
-    private float gravity = 0.5f; // Tiles per second
+    private float gravity = 1f; // Tiles per second
 
     private boolean gameOver = false; // Track game over state
 
     private int linesCleared = 0; // Track lines cleared
+    private int score = 0; // Track player's score
+    private int level = 1; // Track current level
     private final BitmapFont font;
     private  final SpriteBatch spriteBatch;
 
@@ -101,7 +100,8 @@ public class ArcadeScreen implements Screen {
         spawnNewPiece();
         lastFallTime = TimeUtils.millis();
 
-        // We don't need to manually set camera position, the viewport handles it
+        // Initialize gravity based on starting level
+        updateGravity();
     }
 
     @Override
@@ -140,10 +140,9 @@ public class ArcadeScreen implements Screen {
             ghostPiece.render(shapeRenderer, 0.3f);  // Pass alpha value for transparency
         }
 
-        currentPiece.render(shapeRenderer);
-
         // Render power items
         renderPowerItems();
+        currentPiece.render(shapeRenderer);
 
         // End shape rendering started in this method
         shapeRenderer.end();
@@ -161,10 +160,14 @@ public class ArcadeScreen implements Screen {
         spriteBatch.begin();
         font.setColor(Color.WHITE);
         font.getData().setScale(2f);
-        font.draw(spriteBatch, "Lines Cleared: " + linesCleared, 20, Gdx.graphics.getHeight() - 20);
+
+        // Display score, level, and lines cleared
+        font.draw(spriteBatch, "Score: " + score, 20, Gdx.graphics.getHeight() - 20);
+        font.draw(spriteBatch, "Level: " + level, 20, Gdx.graphics.getHeight() - 50);
+        font.draw(spriteBatch, "Lines: " + linesCleared, 20, Gdx.graphics.getHeight() - 80);
 
         // Draw active powers
-        int yPos = Gdx.graphics.getHeight() - 60;
+        int yPos = Gdx.graphics.getHeight() - 120;
         for (Map.Entry<PowerType, Long> power : activePowers.entrySet()) {
             long timeLeft = (power.getValue() - TimeUtils.millis()) / 1000;
             if (timeLeft <= 0) continue;
@@ -250,14 +253,35 @@ public class ArcadeScreen implements Screen {
         // Calculate line clears with power effects
         int lines = grid.checkAndClearLines();
 
+        // Calculate base score for lines cleared
+        int lineScore = 0;
+        switch (lines) {
+            case 1: lineScore = 40; break;
+            case 2: lineScore = 100; break;
+            case 3: lineScore = 300; break;
+            case 4: lineScore = 1200; break;
+        }
+
+        // Apply level multiplier to score
+        int scoreGain = lineScore * level;
+
         // Apply power effects
         if (isPowerActive(PowerType.POWER_UP)) {
             linesCleared += lines * 2; // Double line clears
+            score += scoreGain * 2; // Double score
         } else if (isPowerActive(PowerType.POWER_DOWN)) {
             linesCleared -= lines; // Negative line clears
+            // No score deduction, just no score gain
         } else {
             linesCleared += lines; // Normal line clears
+            score += scoreGain; // Normal score gain
         }
+
+        // Level up every 10 lines
+        level = (linesCleared / 10) + 1;
+
+        // Update gravity based on level
+        updateGravity();
 
         spawnNewPiece();
         canHold = true;
@@ -549,7 +573,9 @@ public class ArcadeScreen implements Screen {
         // Hard drop (Space key)
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             currentPiece.hardDrop(grid); // No need to store the return value
+
             placePiece();
+
             return;
         }
 
@@ -628,6 +654,14 @@ public class ArcadeScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
             holdPiece();
         }
+    }
+
+    /**
+     * Updates gravity (fall speed) based on current level
+     */
+    private void updateGravity() {
+        // Classic Tetris formula: gravity increases with level
+        gravity = gravity + (level - 1) * 0.05f;
     }
 
     @Override public void show() {}

@@ -6,6 +6,8 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -27,6 +29,8 @@ public class GameScreen implements Screen {
     private long lastRightMoveTime = 0;
 
     private final ShapeRenderer shapeRenderer;
+    private final SpriteBatch spriteBatch;
+    private final BitmapFont font;
 
     private final Grid grid;
     private Piece currentPiece;
@@ -36,21 +40,36 @@ public class GameScreen implements Screen {
     private Queue<Tetrimino> nextPieces;
 
     private long lastFallTime;
-    private float gravity = 0.5f; // Tiles per second
+    private float gravity = 1f; // Tiles per second
+
+    // Lock delay variables
+    private boolean lockDelayActive = false;
+    private long lockDelayStartTime = 0;
+    private final long LOCK_DELAY = 500; // Lock delay in milliseconds
+    private int lockResets = 0;
+    private final int MAX_LOCK_RESETS = 15; // Maximum number of lock delay resets
 
     private boolean gameOver = false; // Track game over state
+
+    // Score tracking variables
+    private int score = 0;
+    private int level = 1;
+    private int linesCleared = 0;
 
     public GameScreen(final Tetris game) {
         this.game = game;
 
         shapeRenderer = new ShapeRenderer();
+        spriteBatch = new SpriteBatch();
+        font = new BitmapFont();
         grid = new Grid(Tetris.GRID_WIDTH, Tetris.GRID_HEIGHT);
         nextPieces = new LinkedList<>();
         fillBag(); // Initialize with first bag
         spawnNewPiece();
         lastFallTime = TimeUtils.millis();
 
-        // We don't need to manually set camera position, the viewport handles it
+        // Initialize gravity based on starting level
+        updateGravity();
     }
 
     @Override
@@ -99,6 +118,25 @@ public class GameScreen implements Screen {
         // Hold and Next pieces have their own begin/end calls
         renderHoldPiece();
         renderNextPiece();
+
+        // Render score, level, and lines cleared
+        renderUI();
+    }
+
+    /**
+     * Renders score, level, and lines cleared information
+     */
+    private void renderUI() {
+        spriteBatch.begin();
+        font.setColor(Color.WHITE);
+        font.getData().setScale(2f);
+
+        // Display score, level, and lines cleared
+        font.draw(spriteBatch, "Score: " + score, 20, Gdx.graphics.getHeight() - 20);
+        font.draw(spriteBatch, "Level: " + level, 20, Gdx.graphics.getHeight() - 50);
+        font.draw(spriteBatch, "Lines: " + linesCleared, 20, Gdx.graphics.getHeight() - 80);
+
+        spriteBatch.end();
     }
 
     private void renderNextPiece() {
@@ -216,16 +254,37 @@ public class GameScreen implements Screen {
         grid.lockPiece(currentPiece);
 
         // Check for line clears after locking the piece
-        grid.checkAndClearLines();
-        // TODO: Uncomment when score system is implemented
-        // int linesCleared = grid.checkAndClearLines();
-        // Update score based on linesCleared
+        int lines = grid.checkAndClearLines();
+
+        // Calculate score based on number of lines cleared
+        int lineScore = 0;
+        switch (lines) {
+            case 1: lineScore = 40; break;
+            case 2: lineScore = 100; break;
+            case 3: lineScore = 300; break;
+            case 4: lineScore = 1200; break;
+        }
+
+        // Apply level multiplier
+        score += lineScore * level;
+        linesCleared += lines;
+
+        // Update level (every 10 lines cleared)
+        level = (linesCleared / 10) + 1;
+
+        // Update gravity based on new level
+        updateGravity();
 
         spawnNewPiece();
         canHold = true; // Reset the hold flag after placing a piece
+    }
 
-        // Check for game over condition
-        // (handled in spawnNewPiece)
+    /**
+     * Updates gravity (fall speed) based on current level
+     */
+    private void updateGravity() {
+        // Classic Tetris formula: gravity increases with level
+        gravity = gravity + (level - 1) * 0.05f;
     }
 
     private void handleInput() {
@@ -335,6 +394,18 @@ public class GameScreen implements Screen {
             }
             lastFallTime = TimeUtils.millis();
         }
+
+        // Handle lock delay
+        if (lockDelayActive) {
+            // Check if the lock delay time has passed
+            if (TimeUtils.millis() - lockDelayStartTime > LOCK_DELAY) {
+                lockDelayActive = false;
+                // If still valid, place the piece
+                if (!gameOver && !isValidPosition(currentPiece)) {
+                    placePiece();
+                }
+            }
+        }
     }
 
     /**
@@ -423,5 +494,7 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
         shapeRenderer.dispose();
+        spriteBatch.dispose();
+        font.dispose();
     }
 }
