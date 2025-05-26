@@ -2,6 +2,7 @@ package me.runthebot.tetris;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -70,7 +71,7 @@ public class WinScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(0.08f, 0.13f, 0.22f, 1);
+        ScreenUtils.clear(Color.BLACK);
         stage.act(delta);
         stage.draw();
     }
