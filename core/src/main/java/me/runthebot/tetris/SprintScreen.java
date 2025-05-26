@@ -201,8 +201,8 @@ public class SprintScreen implements Screen {
         updateGhostPiece();  // Position the ghost
 
         // winning condition for sprint mode
-        if (linesCleared >= 40) {
-            // PLAYER WINS TODO:
+        if (linesCleared >= 2) {
+            game.setScreen(new WinScreen(game, "sprint"));
         }
 
         // Game over check: if the new piece collides immediately, game over

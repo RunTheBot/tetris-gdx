@@ -11,12 +11,12 @@ import com.kotcrab.vis.ui.widget.VisSlider;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.kotcrab.vis.ui.widget.VisWindow;
 
-public class GameOverScreen implements Screen {
+public class WinScreen implements Screen {
     private final Tetris game;
     private Stage stage;
     private String gameType;
 
-    public GameOverScreen(final Tetris game, String gameType) {
+    public WinScreen(final Tetris game, String gameType) {
         this.game = game;
         this.gameType = gameType;
     }
@@ -30,7 +30,7 @@ public class GameOverScreen implements Screen {
 
         // game over title
         // TODO: copied from menu screen, refactor to game over
-        VisLabel menuLabel = new VisLabel("Game Over");
+        VisLabel menuLabel = new VisLabel("You Won!");
         menuLabel.setFontScale(3f);
 
         VisTextButton playAgainButton = new VisTextButton("Play Again");
@@ -41,7 +41,7 @@ public class GameOverScreen implements Screen {
                 } else if (gameType == "sprint") {
                     game.setScreen(new SprintScreen(game));
                 } else if (gameType == "arcade") {
-                    // return arcade
+                    // TODO: return arcade
                 }
                 return true;
             }
