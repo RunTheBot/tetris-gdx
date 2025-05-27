@@ -40,11 +40,23 @@ public class ArcadeScreen implements Screen {
 
     private boolean gameOver = false; // Track game over state
 
+    // Lock delay variables
+    private boolean lockDelayActive = false;
+    private long lockDelayStartTime = 0;
+    private final long LOCK_DELAY = 500; // Lock delay in milliseconds
+
+    // Game stats
     private int linesCleared = 0; // Track lines cleared
     private int score = 0; // Track player's score
     private int level = 1; // Track current level
+    private long startTime; // When the game started
+    private long currentTime; // Current game time
+    private float currentSpeed = 0; // Current pieces per second
+    private float maxSpeed = 0; // Maximum speed achieved
+    private int highScore = 0; // High score (points)
+    
     private final BitmapFont font;
-    private  final SpriteBatch spriteBatch;
+    private final SpriteBatch spriteBatch;
 
     // Power up/down system
     private static final int POWER_SPAWN_CHANCE = 50; // % chance per second
@@ -99,6 +111,12 @@ public class ArcadeScreen implements Screen {
         fillBag(); // Initialize with first bag
         spawnNewPiece();
         lastFallTime = TimeUtils.millis();
+        
+        // Initialize stats tracking
+        startTime = TimeUtils.millis();
+        currentTime = 0;
+        currentSpeed = 0;
+        maxSpeed = 0;
 
         // Initialize gravity based on starting level
         updateGravity();
@@ -107,24 +125,32 @@ public class ArcadeScreen implements Screen {
     @Override
     public void render(float delta) {
         if (gameOver) {
-            // Render game over screen
-            Gdx.gl.glClearColor(0, 0, 0, 1);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-            game.camera.update();
-            shapeRenderer.setProjectionMatrix(game.camera.combined);
-
-            // Optionally, render the final grid
-            grid.render(shapeRenderer);
-
-            game.setScreen(new GameOverScreen(game, "arcade"));
-
+            // Capture final stats
+            long finalTime = TimeUtils.millis() - startTime;
+            
+            // Pass game stats to the game over screen
+            game.setScreen(new GameOverScreen(game, "arcade", score, level, linesCleared, 
+                            finalTime, currentSpeed, maxSpeed, 0));
             return;
         }
 
         handleInput();
         update();
         updatePowers(); // Add this line to update powers
+        
+        // Update game stats
+        currentTime = TimeUtils.millis() - startTime;
+        if (currentTime > 0) {
+            currentSpeed = (float) linesCleared / (currentTime / 1000.0f);
+            if (currentSpeed > maxSpeed) {
+                maxSpeed = currentSpeed;
+            }
+        }
+        
+        // Update high score if current score is higher
+        if (score > highScore) {
+            highScore = score;
+        }
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -159,15 +185,30 @@ public class ArcadeScreen implements Screen {
     private void renderUI() {
         spriteBatch.begin();
         font.setColor(Color.WHITE);
-        font.getData().setScale(2f);
-
-        // Display score, level, and lines cleared
-        font.draw(spriteBatch, "Score: " + score, 20, Gdx.graphics.getHeight() - 20);
-        font.draw(spriteBatch, "Level: " + level, 20, Gdx.graphics.getHeight() - 50);
-        font.draw(spriteBatch, "Lines: " + linesCleared, 20, Gdx.graphics.getHeight() - 80);
-
+        font.getData().setScale(1.5f);
+        
+        // Format time as mm:ss.ms
+        String timeString = String.format("%02d:%02d.%d", 
+                (currentTime / 60000), 
+                (currentTime / 1000) % 60,
+                (currentTime / 100) % 10);
+        
+        // Display all arcade mode stats
+        font.draw(spriteBatch, "ARCADE MODE", 20, Gdx.graphics.getHeight() - 20);
+        font.draw(spriteBatch, "Score: " + score, 20, Gdx.graphics.getHeight() - 50);
+        font.draw(spriteBatch, "Level: " + level, 20, Gdx.graphics.getHeight() - 80);
+        font.draw(spriteBatch, "Lines: " + linesCleared, 20, Gdx.graphics.getHeight() - 110);
+        font.draw(spriteBatch, "Time: " + timeString, 20, Gdx.graphics.getHeight() - 140);
+        font.draw(spriteBatch, "Speed: " + String.format("%.2f", currentSpeed) + " lps", 20, Gdx.graphics.getHeight() - 170);
+        font.draw(spriteBatch, "Max Speed: " + String.format("%.2f", maxSpeed) + " lps", 20, Gdx.graphics.getHeight() - 200);
+        
+        // High score if available
+        if (highScore > 0) {
+            font.draw(spriteBatch, "High Score: " + highScore, 20, Gdx.graphics.getHeight() - 230);
+        }
+        
         // Draw active powers
-        int yPos = Gdx.graphics.getHeight() - 120;
+        int yPos = Gdx.graphics.getHeight() - 270;
         for (Map.Entry<PowerType, Long> power : activePowers.entrySet()) {
             long timeLeft = (power.getValue() - TimeUtils.millis()) / 1000;
             if (timeLeft <= 0) continue;
@@ -276,6 +317,19 @@ public class ArcadeScreen implements Screen {
             linesCleared += lines; // Normal line clears
             score += scoreGain; // Normal score gain
         }
+        
+        // Update speed tracking after each piece placement
+        if (TimeUtils.millis() - startTime > 0) {
+            currentSpeed = (float) linesCleared / ((TimeUtils.millis() - startTime) / 1000.0f);
+            if (currentSpeed > maxSpeed) {
+                maxSpeed = currentSpeed;
+            }
+        }
+        
+        // Update high score if current score is higher
+        if (score > highScore) {
+            highScore = score;
+        }
 
         // Level up every 10 lines
         level = (linesCleared / 10) + 1;
@@ -320,13 +374,42 @@ public class ArcadeScreen implements Screen {
     private void update() {
         if (gameOver) return;
 
+        // Check if the piece can move down
+        boolean canMoveDown = currentPiece.move(0, 1, grid);
+        
+        if (canMoveDown) {
+            // Reset lock delay if piece is moved successfully
+            lockDelayActive = false;
+            lastFallTime = TimeUtils.millis();
+            updateGhostPiece();
+            
+            // Move the piece back up
+            currentPiece.move(0, -1, grid);
+        } else if (!lockDelayActive) {
+            // Activate lock delay when piece can't move down
+            lockDelayActive = true;
+            lockDelayStartTime = TimeUtils.millis();
+        }
+        
+        // Apply gravity
         if (TimeUtils.timeSinceMillis(lastFallTime) > 1000 / gravity) {
             boolean moved = currentPiece.move(0, 1, grid);
-            if (!moved) {
-                // If the piece can't move down, place it
-                placePiece();
+            if (!moved && !lockDelayActive) {
+                // If the piece can't move down and lock delay isn't active, activate it
+                lockDelayActive = true;
+                lockDelayStartTime = TimeUtils.millis();
             }
             lastFallTime = TimeUtils.millis();
+        }
+
+        // Handle lock delay
+        if (lockDelayActive) {
+            // Check if the lock delay time has passed
+            if (TimeUtils.millis() - lockDelayStartTime > LOCK_DELAY) {
+                lockDelayActive = false;
+                // Place the piece when lock delay expires
+                placePiece();
+            }
         }
     }
 

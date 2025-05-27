@@ -55,6 +55,13 @@ public class GameScreen implements Screen {
     private int score = 0;
     private int level = 1;
     private int linesCleared = 0;
+    
+    // Additional stats
+    private long startTime;
+    private long currentTime;
+    private float currentSpeed = 0; // Current pieces per second
+    private float maxSpeed = 0; // Maximum speed achieved
+    private int highScore = 0; // High score
 
     public GameScreen(final Tetris game) {
         this.game = game;
@@ -67,7 +74,11 @@ public class GameScreen implements Screen {
         fillBag(); // Initialize with first bag
         spawnNewPiece();
         lastFallTime = TimeUtils.millis();
-
+        
+        // Initialize stats tracking
+        startTime = TimeUtils.millis();
+        currentTime = 0;
+        
         // Initialize gravity based on starting level
         updateGravity();
     }
@@ -75,23 +86,23 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         if (gameOver) {
-            // Render game over screen
-            Gdx.gl.glClearColor(0, 0, 0, 1);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-            game.camera.update();
-            shapeRenderer.setProjectionMatrix(game.camera.combined);
-
-            // Optionally, render the final grid
-            grid.render(shapeRenderer);
-
-            game.setScreen(new GameOverScreen(game, "classic"));
-
+            // Pass game stats to the game over screen
+            game.setScreen(new GameOverScreen(game, "classic", score, level, linesCleared, 
+                          currentTime, currentSpeed, maxSpeed, 0));
             return;
         }
 
         handleInput();
         update();
+        
+        // Update game stats
+        currentTime = TimeUtils.millis() - startTime;
+        if (currentTime > 0) {
+            currentSpeed = (float) linesCleared / (currentTime / 1000.0f);
+            if (currentSpeed > maxSpeed) {
+                maxSpeed = currentSpeed;
+            }
+        }
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -129,12 +140,30 @@ public class GameScreen implements Screen {
     private void renderUI() {
         spriteBatch.begin();
         font.setColor(Color.WHITE);
-        font.getData().setScale(2f);
+        font.getData().setScale(1.5f);
 
-        // Display score, level, and lines cleared
-        font.draw(spriteBatch, "Score: " + score, 20, Gdx.graphics.getHeight() - 20);
-        font.draw(spriteBatch, "Level: " + level, 20, Gdx.graphics.getHeight() - 50);
-        font.draw(spriteBatch, "Lines: " + linesCleared, 20, Gdx.graphics.getHeight() - 80);
+        // Format time as mm:ss.ms
+        String timeString = String.format("%02d:%02d.%d", 
+                (currentTime / 60000), 
+                (currentTime / 1000) % 60,
+                (currentTime / 100) % 10);
+        
+        // Display all marathon mode stats
+        font.draw(spriteBatch, "MARATHON MODE", 20, Gdx.graphics.getHeight() - 20);
+        font.draw(spriteBatch, "Score: " + score, 20, Gdx.graphics.getHeight() - 50);
+        font.draw(spriteBatch, "Level: " + level, 20, Gdx.graphics.getHeight() - 80);
+        font.draw(spriteBatch, "Lines: " + linesCleared, 20, Gdx.graphics.getHeight() - 110);
+        font.draw(spriteBatch, "Time: " + timeString, 20, Gdx.graphics.getHeight() - 140);
+        font.draw(spriteBatch, "Speed: " + String.format("%.2f", currentSpeed) + " lps", 20, Gdx.graphics.getHeight() - 170);
+        font.draw(spriteBatch, "Max Speed: " + String.format("%.2f", maxSpeed) + " lps", 20, Gdx.graphics.getHeight() - 200);
+        
+        // Display gravity
+        font.draw(spriteBatch, "Gravity: " + String.format("%.2f", gravity), 20, Gdx.graphics.getHeight() - 230);
+        
+        // Display high score if available
+        if (highScore > 0) {
+            font.draw(spriteBatch, "High Score: " + highScore, 20, Gdx.graphics.getHeight() - 260);
+        }
 
         spriteBatch.end();
     }
@@ -268,13 +297,26 @@ public class GameScreen implements Screen {
         // Apply level multiplier
         score += lineScore * level;
         linesCleared += lines;
+        
+        // Update speed tracking after each piece placement
+        if (TimeUtils.millis() - startTime > 0) {
+            currentSpeed = (float) linesCleared / ((TimeUtils.millis() - startTime) / 1000.0f);
+            if (currentSpeed > maxSpeed) {
+                maxSpeed = currentSpeed;
+            }
+        }
+        
+        // Update high score if current score is higher
+        if (score > highScore) {
+            highScore = score;
+        }
 
         // Update level (every 10 lines cleared)
         level = (linesCleared / 10) + 1;
 
         // Update gravity based on new level
         updateGravity();
-
+        
         spawnNewPiece();
         canHold = true; // Reset the hold flag after placing a piece
     }
@@ -323,6 +365,10 @@ public class GameScreen implements Screen {
                 lastLeftMoveTime = currentTime;
                 if (currentPiece.move(-1, 0, grid)) {
                     updateGhostPiece();
+                    // Reset lock delay when piece is moved
+                    if (lockDelayActive) {
+                        lockDelayStartTime = TimeUtils.millis();
+                    }
                 }
             } else {
                 long elapsedSincePress = currentTime - leftPressTime;
@@ -334,6 +380,10 @@ public class GameScreen implements Screen {
                     // Move all the way to the left until it can't move anymore
                     while (currentPiece.move(-1, 0, grid)) {
                         moved = true;
+                        // Reset lock delay when piece is moved
+                        if (lockDelayActive) {
+                            lockDelayStartTime = TimeUtils.millis();
+                        }
                     }
                     if (moved) updateGhostPiece();
                     lastLeftMoveTime = currentTime;
@@ -351,6 +401,10 @@ public class GameScreen implements Screen {
                 lastRightMoveTime = currentTime;
                 if (currentPiece.move(1, 0, grid)) {
                     updateGhostPiece();
+                    // Reset lock delay when piece is moved
+                    if (lockDelayActive) {
+                        lockDelayStartTime = TimeUtils.millis();
+                    }
                 }
             } else {
                 long elapsedSincePress = currentTime - rightPressTime;
@@ -362,6 +416,10 @@ public class GameScreen implements Screen {
                     // Move all the way to the right until it can't move anymore
                     while (currentPiece.move(1, 0, grid)) {
                         moved = true;
+                        // Reset lock delay when piece is moved
+                        if (lockDelayActive) {
+                            lockDelayStartTime = TimeUtils.millis();
+                        }
                     }
                     if (moved) updateGhostPiece();
                     lastRightMoveTime = currentTime;
@@ -375,6 +433,10 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
             if (currentPiece.rotate(grid)) {
                 updateGhostPiece();
+                // Reset lock delay when piece is rotated
+                if (lockDelayActive) {
+                    lockDelayStartTime = TimeUtils.millis();
+                }
             }
         }
 
@@ -386,11 +448,31 @@ public class GameScreen implements Screen {
 
     private void update() {
         if (gameOver) return; // Stop updates if game is over
+        
+        // Check if the piece can move down
+        boolean canMoveDown = currentPiece.move(0, 1, grid);
+        
+        if (canMoveDown) {
+            // Reset lock delay if piece is moved successfully
+            lockDelayActive = false;
+            lastFallTime = TimeUtils.millis();
+            updateGhostPiece();
+            
+            // Move the piece back up
+            currentPiece.move(0, -1, grid);
+        } else if (!lockDelayActive) {
+            // Activate lock delay when piece can't move down
+            lockDelayActive = true;
+            lockDelayStartTime = TimeUtils.millis();
+        }
+        
+        // Apply gravity
         if (TimeUtils.timeSinceMillis(lastFallTime) > 1000 / gravity) {
             boolean moved = currentPiece.move(0, 1, grid);
-            if (!moved) {
-                // If the piece can't move down, place it
-                placePiece();
+            if (!moved && !lockDelayActive) {
+                // If the piece can't move down and lock delay isn't active, activate it
+                lockDelayActive = true;
+                lockDelayStartTime = TimeUtils.millis();
             }
             lastFallTime = TimeUtils.millis();
         }
@@ -400,10 +482,8 @@ public class GameScreen implements Screen {
             // Check if the lock delay time has passed
             if (TimeUtils.millis() - lockDelayStartTime > LOCK_DELAY) {
                 lockDelayActive = false;
-                // If still valid, place the piece
-                if (!gameOver && !isValidPosition(currentPiece)) {
-                    placePiece();
-                }
+                // Place the piece when lock delay expires
+                placePiece();
             }
         }
     }
