@@ -47,7 +47,7 @@ public class GameScreen implements Screen {
     private long lockDelayStartTime = 0;
     private final long LOCK_DELAY = 500; // Lock delay in milliseconds
     private int lockResets = 0;
-    private final int MAX_LOCK_RESETS = 15; // Maximum number of lock delay resets
+    private final int MAX_LOCK_RESETS = 15;
 
     private boolean gameOver = false; // Track game over state
 
@@ -234,6 +234,9 @@ public class GameScreen implements Screen {
 
         updateGhostPiece();  // Position the ghost
 
+        lockResets = 0; // Reset lock resets
+        lockDelayActive = false; // Reset lock delay active
+
         // Game over check: if the new piece collides immediately, game over
         if (!isValidPosition(currentPiece)) {
             gameOver = true;
@@ -317,6 +320,10 @@ public class GameScreen implements Screen {
         // Update gravity based on new level
         updateGravity();
 
+        // Reset lock delay mechanism as piece is now placed
+        lockDelayActive = false;
+        lockResets = 0;
+
         spawnNewPiece();
         canHold = true; // Reset the hold flag after placing a piece
     }
@@ -354,6 +361,11 @@ public class GameScreen implements Screen {
             boolean moved = currentPiece.move(0, 1, grid);
             if (moved) {
                 updateGhostPiece();
+                // Reset lock delay when piece is moved by soft drop
+                if (lockDelayActive && lockResets < MAX_LOCK_RESETS) {
+                    lockDelayStartTime = TimeUtils.millis();
+                    lockResets++;
+                }
             }
         }
 
@@ -366,8 +378,9 @@ public class GameScreen implements Screen {
                 if (currentPiece.move(-1, 0, grid)) {
                     updateGhostPiece();
                     // Reset lock delay when piece is moved
-                    if (lockDelayActive) {
+                    if (lockDelayActive && lockResets < MAX_LOCK_RESETS) {
                         lockDelayStartTime = TimeUtils.millis();
+                        lockResets++;
                     }
                 }
             } else {
@@ -381,8 +394,9 @@ public class GameScreen implements Screen {
                     while (currentPiece.move(-1, 0, grid)) {
                         moved = true;
                         // Reset lock delay when piece is moved
-                        if (lockDelayActive) {
+                        if (lockDelayActive && lockResets < MAX_LOCK_RESETS) {
                             lockDelayStartTime = TimeUtils.millis();
+                            lockResets++;
                         }
                     }
                     if (moved) updateGhostPiece();
@@ -402,8 +416,9 @@ public class GameScreen implements Screen {
                 if (currentPiece.move(1, 0, grid)) {
                     updateGhostPiece();
                     // Reset lock delay when piece is moved
-                    if (lockDelayActive) {
+                    if (lockDelayActive && lockResets < MAX_LOCK_RESETS) {
                         lockDelayStartTime = TimeUtils.millis();
+                        lockResets++;
                     }
                 }
             } else {
@@ -417,8 +432,9 @@ public class GameScreen implements Screen {
                     while (currentPiece.move(1, 0, grid)) {
                         moved = true;
                         // Reset lock delay when piece is moved
-                        if (lockDelayActive) {
+                        if (lockDelayActive && lockResets < MAX_LOCK_RESETS) {
                             lockDelayStartTime = TimeUtils.millis();
+                            lockResets++;
                         }
                     }
                     if (moved) updateGhostPiece();
@@ -434,8 +450,9 @@ public class GameScreen implements Screen {
             if (currentPiece.rotate(grid)) {
                 updateGhostPiece();
                 // Reset lock delay when piece is rotated
-                if (lockDelayActive) {
+                if (lockDelayActive && lockResets < MAX_LOCK_RESETS) {
                     lockDelayStartTime = TimeUtils.millis();
+                    lockResets++;
                 }
             }
         }
@@ -449,41 +466,43 @@ public class GameScreen implements Screen {
     private void update() {
         if (gameOver) return; // Stop updates if game is over
 
-        // Check if the piece can move down
-        boolean canMoveDown = currentPiece.move(0, 1, grid);
-
-        if (canMoveDown) {
-            // Reset lock delay if piece is moved successfully
-            lockDelayActive = false;
-            lastFallTime = TimeUtils.millis();
-            updateGhostPiece();
-
-            // Move the piece back up
-            currentPiece.move(0, -1, grid);
-        } else if (!lockDelayActive) {
-            // Activate lock delay when piece can't move down
-            lockDelayActive = true;
-            lockDelayStartTime = TimeUtils.millis();
-        }
-
-        // Apply gravity
-        if (TimeUtils.timeSinceMillis(lastFallTime) > 1000 / gravity) {
-            boolean moved = currentPiece.move(0, 1, grid);
-            if (!moved && !lockDelayActive) {
-                // If the piece can't move down and lock delay isn't active, activate it
-                lockDelayActive = true;
-                lockDelayStartTime = TimeUtils.millis();
+        // Try to move the piece down due to gravity
+        if (TimeUtils.timeSinceMillis(lastFallTime) >= (1000 / gravity)) {
+            if (currentPiece.move(0, 1, grid)) { // Attempt to move piece down
+                // Piece moved down successfully
+                lastFallTime = TimeUtils.millis();
+                lockDelayActive = false; // If piece is falling, it's not in lock delay
+                updateGhostPiece();
+            } else {
+                // Piece could not move down (landed)
+                if (!lockDelayActive) {
+                    // Activate lock delay if not already active
+                    lockDelayActive = true;
+                    lockDelayStartTime = TimeUtils.millis();
+                }
+                // Note: lastFallTime is not reset here because the piece didn't fall.
+                // The gravity timer effectively pauses while the piece is landed and lock delay is potentially active.
             }
-            lastFallTime = TimeUtils.millis();
         }
 
         // Handle lock delay
         if (lockDelayActive) {
-            // Check if the lock delay time has passed
-            if (TimeUtils.millis() - lockDelayStartTime > LOCK_DELAY) {
-                lockDelayActive = false;
-                // Place the piece when lock delay expires
-                placePiece();
+            // Check if the lock delay time has passed or max resets reached
+            if (TimeUtils.millis() - lockDelayStartTime > LOCK_DELAY || lockResets >= MAX_LOCK_RESETS) {
+                // Before placing, make a final check if the piece can move down
+                // This handles scenarios like a line clear opening space below
+                if (!currentPiece.move(0, 1, grid)) {
+                    // Still cannot move down, so place the piece
+                    placePiece(); // This method should handle resetting lockDelayActive and lockResets
+                } else {
+                    // Piece was able to move down (e.g., space cleared below)
+                    // It has now moved down one step.
+                    lastFallTime = TimeUtils.millis(); // Reset fall time as it moved
+                    lockDelayActive = false;           // No longer in lock delay
+                    lockResets = 0;                    // Resets are cleared as it moved instead of locking
+                    updateGhostPiece();
+                    // The piece has already been moved down by currentPiece.move(0,1,grid)
+                }
             }
         }
     }
