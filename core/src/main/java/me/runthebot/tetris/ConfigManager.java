@@ -28,6 +28,9 @@ public class ConfigManager {
         return config;
     }
 
+    /**
+     * Saves the current config to a file
+     */
     public void saveConfig() {
         FileHandle file = Gdx.files.local(CONFIG_FILE);
         StringBuilder data = new StringBuilder();
@@ -39,6 +42,9 @@ public class ConfigManager {
         file.writeString(data.toString(), false);
     }
 
+    /**
+     * Loads the config from the file
+     */
     private void loadConfig() {
         FileHandle file = Gdx.files.local(CONFIG_FILE);
         config = new GameConfig();
