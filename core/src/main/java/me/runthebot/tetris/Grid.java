@@ -25,7 +25,12 @@ public class Grid {
         this.colors = new Color[height][width];
     }
 
-    // checks if a cell is occupied
+    /**
+     * Checks if a cell is occupied.
+     * @param x
+     * @param y
+     * @return true if the cell is occupied, else false
+     */
     public boolean isOccupied(int x, int y) {
         if (x < 0 || x >= width || y < 0 || y >= height) return true;
         return cells[y][x];

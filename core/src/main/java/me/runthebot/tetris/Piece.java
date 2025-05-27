@@ -24,7 +24,13 @@ public class Piece {
         this.y = BUFFER_SIZE - 2;
     }
 
-    // allows for block to be moved
+    /**
+     * Allows for a block to be moved
+     * @param dx
+     * @param dy
+     * @param field
+     * @return true if the move was successful, else false
+     */
     public boolean move(int dx, int dy, Grid field) {
         int newX = x + dx;
         int newY = y + dy;
@@ -36,7 +42,11 @@ public class Piece {
         return false;
     }
 
-    // allows for piece rotation
+    /**
+     * Allows for piece rotation
+     * @param field
+     * @return true if the rotation worked, else false
+     */
     public boolean rotate(Grid field) {
         boolean[][] rotated = rotate90(grid);
         if (!collides(x, y, rotated, field)) {
@@ -63,7 +73,14 @@ public class Piece {
         return rowsDropped;
     }
 
-    // check if block collides
+    /**
+     * Check if the block collides with the grid or other blocks
+     * @param tx
+     * @param ty
+     * @param shape
+     * @param field
+     * @return true if the block collides, else false
+     */
     private boolean collides(int tx, int ty, boolean[][] shape, Grid field) {
         for (int row = 0; row < shape.length; row++) {
             for (int col = 0; col < shape[0].length; col++) {
@@ -81,7 +98,11 @@ public class Piece {
     // Use the same offset as the grid for consistency
     float offset = Grid.CENTER_OFFSET;
 
-    // rotate piece 90 degrees
+    /**
+     * Rotates a piece 90 degrees clockwise
+     * @param input
+     * @return the rotated piece as a 2d array of booleans
+     */
     private boolean[][] rotate90(boolean[][] input) {
         int rows = input.length;
         int cols = input[0].length;
@@ -129,7 +150,6 @@ public class Piece {
     }
 
     public void render(ShapeRenderer renderer) {
-
         renderer.begin(ShapeRenderer.ShapeType.Filled);
         renderer.setColor(getType().getColor());
         for (int row = 0; row < grid.length; row++) {
@@ -170,6 +190,10 @@ public class Piece {
         this.y = y;
     }
 
+    /**
+     * Sets the rotation of the piece
+     * @param rotation
+     */
     public void setRotation(int rotation) {
         // Create a copy of the original shape
         boolean[][] newGrid = type.getShape();
@@ -183,6 +207,10 @@ public class Piece {
         this.rotation = rotation;
     }
 
+    /**
+     * Gets the shape of the piece based on the rotation
+     * @return the piece as a 2d boolean array
+     */
     public boolean[][] getShape() {
         // Assuming you have a Tetrimino type with a getShape(int rotation) method
         return type.getShape(rotation);

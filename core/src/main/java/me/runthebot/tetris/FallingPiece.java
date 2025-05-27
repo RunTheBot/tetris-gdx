@@ -24,6 +24,11 @@ public class FallingPiece {
         this.rotationSpeed = (float) (Math.random() * 50 - 25);
     }
 
+    /**
+     * Updates the position and rotation of the falling piece.
+     *
+     * @param delta the time delta
+     */
     public void update(float delta) {
         position.add(0, velocity.y * delta);
         rotation += rotationSpeed * delta;
@@ -34,6 +39,10 @@ public class FallingPiece {
         }
     }
 
+    /**
+     * Renders the falling piece using the ShapeRenderer
+     * @param renderer
+     */
     public void render(ShapeRenderer renderer) {
         renderer.setColor(color);
         boolean[][] shape = type.getShape();
