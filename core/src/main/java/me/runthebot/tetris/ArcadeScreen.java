@@ -506,7 +506,7 @@ public class ArcadeScreen implements Screen {
             for (int col = 0; col < shape[row].length; col++) {
                 if (shape[row][col]) {
                     float blockX = holdX + col + offsetX;
-                    float blockY = holdY + row + offsetY;
+                    float blockY = holdY -row + offsetY;
                     shapeRenderer.rect(blockX, blockY, 1, 1);
                 }
             }
@@ -642,7 +642,7 @@ public class ArcadeScreen implements Screen {
             for (int col = 0; col < shape[row].length; col++) {
                 if (shape[row][col]) {
                     float blockX = previewX + col + offsetX;
-                    float blockY = previewY + row + offsetY;
+                    float blockY = previewY -row + offsetY;
                     shapeRenderer.rect(blockX, blockY, 1, 1);
                 }
             }
