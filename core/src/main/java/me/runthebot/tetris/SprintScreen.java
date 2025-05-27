@@ -56,7 +56,7 @@ public class SprintScreen implements Screen {
     private float maxSpeed = 0; // Maximum speed achieved
     private int highScore = 0; // High score (fastest time)
     private int level = 1; // Current level
-    
+
     private final BitmapFont font;
     private final SpriteBatch spriteBatch;
 
@@ -71,7 +71,7 @@ public class SprintScreen implements Screen {
         fillBag(); // Initialize with first bag
         spawnNewPiece();
         lastFallTime = TimeUtils.millis();
-        
+
         // Initialize sprint mode stats
         startTime = TimeUtils.millis();
         linesLeft = targetLines - linesCleared;
@@ -86,9 +86,9 @@ public class SprintScreen implements Screen {
         if (gameOver) {
             // Capture final stats
             long finalTime = TimeUtils.millis() - startTime;
-            
+
             // Pass the game type and stats to game over screen
-            game.setScreen(new GameOverScreen(game, "sprint", 0, level, linesCleared, 
+            game.setScreen(new GameOverScreen(game, "sprint", 0, level, linesCleared,
                             finalTime, currentSpeed, maxSpeed, targetLines - linesCleared));
             return;
         }
@@ -125,14 +125,14 @@ public class SprintScreen implements Screen {
         // Update statistics
         currentTime = TimeUtils.millis() - startTime;
         linesLeft = targetLines - linesCleared;
-        
+
         // Calculate pace (lines per minute)
         if (currentTime > 0) {
             pace = (float) linesCleared / (currentTime / 60000.0f);
-            
+
             // Calculate current speed (moves per second)
             currentSpeed = (float) linesCleared / (currentTime / 1000.0f);
-            
+
             // Update max speed if current is higher
             if (currentSpeed > maxSpeed) {
                 maxSpeed = currentSpeed;
@@ -142,7 +142,7 @@ public class SprintScreen implements Screen {
         // Render UI with updated stats
         renderUI();
     }
-    
+
     /**
      * Renders game statistics and UI
      */
@@ -150,13 +150,13 @@ public class SprintScreen implements Screen {
         spriteBatch.begin();
         font.setColor(Color.WHITE);
         font.getData().setScale(1.5f);
-        
+
         // Format time as mm:ss.ms
-        String timeString = String.format("%02d:%02d.%d", 
-                (currentTime / 60000), 
+        String timeString = String.format("%02d:%02d.%d",
+                (currentTime / 60000),
                 (currentTime / 1000) % 60,
                 (currentTime / 100) % 10);
-        
+
         // Display all sprint mode stats
         font.draw(spriteBatch, "SPRINT MODE", 20, Gdx.graphics.getHeight() - 20);
         font.draw(spriteBatch, "Time: " + timeString, 20, Gdx.graphics.getHeight() - 50);
@@ -165,7 +165,7 @@ public class SprintScreen implements Screen {
         font.draw(spriteBatch, "Pace: " + String.format("%.2f", pace) + " lpm", 20, Gdx.graphics.getHeight() - 140);
         font.draw(spriteBatch, "Speed: " + String.format("%.2f", currentSpeed) + " lps", 20, Gdx.graphics.getHeight() - 170);
         font.draw(spriteBatch, "Max Speed: " + String.format("%.2f", maxSpeed) + " lps", 20, Gdx.graphics.getHeight() - 200);
-        
+
         spriteBatch.end();
     }
 
@@ -260,14 +260,14 @@ public class SprintScreen implements Screen {
         if (linesCleared >= targetLines) {
             // Save stats before transition
             long finalTime = TimeUtils.millis() - startTime;
-            
+
             // Check if this is a new high score (lowest time)
             if (highScore == 0 || finalTime < highScore) {
                 highScore = (int)finalTime;
             }
-            
+
             // Pass the game stats to win screen
-            game.setScreen(new WinScreen(game, "sprint", 0, level, linesCleared, 
+            game.setScreen(new WinScreen(game, "sprint", 0, level, linesCleared,
                                         finalTime, currentSpeed, maxSpeed, highScore));
             return;
         }
@@ -324,10 +324,10 @@ public class SprintScreen implements Screen {
         int lines = grid.checkAndClearLines();
         linesCleared += lines;
         linesLeft = targetLines - linesCleared;
-        
+
         // Update level (every 10 lines cleared)
         level = (linesCleared / 10) + 1;
-        
+
         // Update speed tracking after each piece placement
         if (TimeUtils.millis() - startTime > 0) {
             currentSpeed = (float) linesCleared / ((TimeUtils.millis() - startTime) / 1000.0f);
@@ -455,16 +455,16 @@ public class SprintScreen implements Screen {
 
     private void update() {
         if (gameOver) return; // Stop updates if game is over
-        
+
         // Check if the piece can move down
         boolean canMoveDown = currentPiece.move(0, 1, grid);
-        
+
         if (canMoveDown) {
             // Reset lock delay if piece is moved successfully
             lockDelayActive = false;
             lastFallTime = TimeUtils.millis();
             updateGhostPiece();
-            
+
             // Move the piece back up
             currentPiece.move(0, -1, grid);
         } else if (!lockDelayActive) {
@@ -472,7 +472,7 @@ public class SprintScreen implements Screen {
             lockDelayActive = true;
             lockDelayStartTime = TimeUtils.millis();
         }
-        
+
         // Apply gravity
         if (TimeUtils.timeSinceMillis(lastFallTime) > 1000 / gravity) {
             boolean moved = currentPiece.move(0, 1, grid);

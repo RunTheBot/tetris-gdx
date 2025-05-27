@@ -16,7 +16,7 @@ public class GameOverScreen implements Screen {
     private final Tetris game;
     private Stage stage;
     private String gameType;
-    
+
     // Game stats to display
     private int score;
     private int level;
@@ -29,7 +29,7 @@ public class GameOverScreen implements Screen {
     public GameOverScreen(final Tetris game, String gameType) {
         this.game = game;
         this.gameType = gameType;
-        
+
         // In a real implementation, these would be passed from the game screen
         // This is just a placeholder until we implement a proper way to pass the stats
         this.score = 0;
@@ -40,11 +40,11 @@ public class GameOverScreen implements Screen {
         this.maxSpeed = 0;
         this.linesLeft = 0;
     }
-    
+
     /**
      * Constructor with game stats
      */
-    public GameOverScreen(final Tetris game, String gameType, int score, int level, int linesCleared, 
+    public GameOverScreen(final Tetris game, String gameType, int score, int level, int linesCleared,
                          long time, float currentSpeed, float maxSpeed, int linesLeft) {
         this.game = game;
         this.gameType = gameType;
@@ -67,17 +67,17 @@ public class GameOverScreen implements Screen {
         // game over title
         VisLabel menuLabel = new VisLabel("Game Over");
         menuLabel.setFontScale(3f);
-        
+
         // Game stats table
         Table statsTable = new Table();
         statsTable.defaults().pad(5).left();
-        
+
         // Format time as mm:ss.ms
-        String timeString = String.format("%02d:%02d.%d", 
-                (time / 60000), 
+        String timeString = String.format("%02d:%02d.%d",
+                (time / 60000),
                 (time / 1000) % 60,
                 (time / 100) % 10);
-        
+
         // Add stats based on game type
         if (gameType.equals("sprint")) {
             statsTable.add(new VisLabel("SPRINT MODE STATS")).colspan(2).center().padBottom(10).row();
@@ -113,7 +113,7 @@ public class GameOverScreen implements Screen {
             statsTable.add(new VisLabel("Lines Cleared:")).padRight(10);
             statsTable.add(new VisLabel(String.valueOf(linesCleared))).row();
         }
-        
+
         // Add common stats
         statsTable.add(new VisLabel("Current Speed:")).padRight(10);
         statsTable.add(new VisLabel(String.format("%.2f lps", currentSpeed))).row();

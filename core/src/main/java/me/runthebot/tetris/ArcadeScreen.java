@@ -54,7 +54,7 @@ public class ArcadeScreen implements Screen {
     private float currentSpeed = 0; // Current pieces per second
     private float maxSpeed = 0; // Maximum speed achieved
     private int highScore = 0; // High score (points)
-    
+
     private final BitmapFont font;
     private final SpriteBatch spriteBatch;
 
@@ -111,7 +111,7 @@ public class ArcadeScreen implements Screen {
         fillBag(); // Initialize with first bag
         spawnNewPiece();
         lastFallTime = TimeUtils.millis();
-        
+
         // Initialize stats tracking
         startTime = TimeUtils.millis();
         currentTime = 0;
@@ -127,9 +127,9 @@ public class ArcadeScreen implements Screen {
         if (gameOver) {
             // Capture final stats
             long finalTime = TimeUtils.millis() - startTime;
-            
+
             // Pass game stats to the game over screen
-            game.setScreen(new GameOverScreen(game, "arcade", score, level, linesCleared, 
+            game.setScreen(new GameOverScreen(game, "arcade", score, level, linesCleared,
                             finalTime, currentSpeed, maxSpeed, 0));
             return;
         }
@@ -137,7 +137,7 @@ public class ArcadeScreen implements Screen {
         handleInput();
         update();
         updatePowers(); // Add this line to update powers
-        
+
         // Update game stats
         currentTime = TimeUtils.millis() - startTime;
         if (currentTime > 0) {
@@ -146,7 +146,7 @@ public class ArcadeScreen implements Screen {
                 maxSpeed = currentSpeed;
             }
         }
-        
+
         // Update high score if current score is higher
         if (score > highScore) {
             highScore = score;
@@ -186,13 +186,13 @@ public class ArcadeScreen implements Screen {
         spriteBatch.begin();
         font.setColor(Color.WHITE);
         font.getData().setScale(1.5f);
-        
+
         // Format time as mm:ss.ms
-        String timeString = String.format("%02d:%02d.%d", 
-                (currentTime / 60000), 
+        String timeString = String.format("%02d:%02d.%d",
+                (currentTime / 60000),
                 (currentTime / 1000) % 60,
                 (currentTime / 100) % 10);
-        
+
         // Display all arcade mode stats
         font.draw(spriteBatch, "ARCADE MODE", 20, Gdx.graphics.getHeight() - 20);
         font.draw(spriteBatch, "Score: " + score, 20, Gdx.graphics.getHeight() - 50);
@@ -201,12 +201,12 @@ public class ArcadeScreen implements Screen {
         font.draw(spriteBatch, "Time: " + timeString, 20, Gdx.graphics.getHeight() - 140);
         font.draw(spriteBatch, "Speed: " + String.format("%.2f", currentSpeed) + " lps", 20, Gdx.graphics.getHeight() - 170);
         font.draw(spriteBatch, "Max Speed: " + String.format("%.2f", maxSpeed) + " lps", 20, Gdx.graphics.getHeight() - 200);
-        
+
         // High score if available
         if (highScore > 0) {
             font.draw(spriteBatch, "High Score: " + highScore, 20, Gdx.graphics.getHeight() - 230);
         }
-        
+
         // Draw active powers
         int yPos = Gdx.graphics.getHeight() - 270;
         for (Map.Entry<PowerType, Long> power : activePowers.entrySet()) {
@@ -317,7 +317,7 @@ public class ArcadeScreen implements Screen {
             linesCleared += lines; // Normal line clears
             score += scoreGain; // Normal score gain
         }
-        
+
         // Update speed tracking after each piece placement
         if (TimeUtils.millis() - startTime > 0) {
             currentSpeed = (float) linesCleared / ((TimeUtils.millis() - startTime) / 1000.0f);
@@ -325,7 +325,7 @@ public class ArcadeScreen implements Screen {
                 maxSpeed = currentSpeed;
             }
         }
-        
+
         // Update high score if current score is higher
         if (score > highScore) {
             highScore = score;
@@ -376,13 +376,13 @@ public class ArcadeScreen implements Screen {
 
         // Check if the piece can move down
         boolean canMoveDown = currentPiece.move(0, 1, grid);
-        
+
         if (canMoveDown) {
             // Reset lock delay if piece is moved successfully
             lockDelayActive = false;
             lastFallTime = TimeUtils.millis();
             updateGhostPiece();
-            
+
             // Move the piece back up
             currentPiece.move(0, -1, grid);
         } else if (!lockDelayActive) {
@@ -390,7 +390,7 @@ public class ArcadeScreen implements Screen {
             lockDelayActive = true;
             lockDelayStartTime = TimeUtils.millis();
         }
-        
+
         // Apply gravity
         if (TimeUtils.timeSinceMillis(lastFallTime) > 1000 / gravity) {
             boolean moved = currentPiece.move(0, 1, grid);
