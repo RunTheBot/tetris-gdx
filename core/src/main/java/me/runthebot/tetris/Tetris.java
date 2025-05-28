@@ -7,7 +7,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.kotcrab.vis.ui.VisUI;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
+/**
+ * Main entry point for the Tetris game, shared by all platforms.
+ * Sets up the camera, viewport, and initial screen.
+ */
 public class Tetris extends Game {
     public static final int GRID_WIDTH = 10;
     public static final int BUFFER_SIZE = 20;

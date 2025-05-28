@@ -13,6 +13,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
 import java.util.*;
 
+/**
+ * Implements the "Sprint" game mode where the player must clear a set number of lines as fast as possible.
+ * Handles game logic, rendering, and user input for this mode.
+ */
 public class SprintScreen implements Screen {
     final Tetris game;
 

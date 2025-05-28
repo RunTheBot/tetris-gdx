@@ -8,6 +8,10 @@ import com.badlogic.gdx.utils.StringBuilder;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Singleton for loading, saving, and providing access to game configuration settings.
+ * Handles persistence of user preferences.
+ */
 public class ConfigManager {
     // Path to the configuration file
     private static final String CONFIG_FILE = "config.txt";

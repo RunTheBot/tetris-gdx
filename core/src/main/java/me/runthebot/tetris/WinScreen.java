@@ -12,6 +12,10 @@ import com.kotcrab.vis.ui.widget.VisSlider;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.kotcrab.vis.ui.widget.VisWindow;
 
+/**
+ * Screen displayed when the player wins a game mode.
+ * Shows final stats and allows returning to the menu or starting a new game.
+ */
 public class WinScreen implements Screen {
     private final Tetris game;
     private Stage stage;
