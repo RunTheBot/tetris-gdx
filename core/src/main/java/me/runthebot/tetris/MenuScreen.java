@@ -108,12 +108,14 @@ public class MenuScreen implements Screen {
             return false;
         });
 
+        // each button starts transparent
         classicPlayButton.getColor().a = 0;
         sprintPlayButton.getColor().a = 0;
         arcadePlayButton.getColor().a = 0;
         settingsButton.getColor().a = 0;
         quitButton.getColor().a = 0;
 
+        // add fade-in actions for the buttons
         classicPlayButton.addAction(Actions.sequence(Actions.delay(0.5f), Actions.fadeIn(1f)));
         sprintPlayButton.addAction(Actions.sequence(Actions.delay(1f), Actions.fadeIn(1f)));
         arcadePlayButton.addAction(Actions.sequence(Actions.delay(1.5f), Actions.fadeIn(1f)));

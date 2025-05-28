@@ -9,14 +9,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ConfigManager {
+    // Path to the configuration file
     private static final String CONFIG_FILE = "config.txt";
+    // Instance of ConfigManager
     private static ConfigManager instance;
+    // Game configuration object
     private GameConfig config;
 
+    /**
+     * Loads the configuration when a ConfigManager is created
+     */
     private ConfigManager() {
         loadConfig();
     }
 
+    /**
+     * Returns the current instance of the config manager
+     * @return
+     */
     public static ConfigManager getInstance() {
         if (instance == null) {
             instance = new ConfigManager();
@@ -24,6 +34,10 @@ public class ConfigManager {
         return instance;
     }
 
+    /**
+     * Returns the current game configuration
+     * @return
+     */
     public GameConfig getConfig() {
         return config;
     }

@@ -16,6 +16,7 @@ public class Tetris extends Game {
     public static float VIEWPOET_HEIGHT = (GRID_HEIGHT - BUFFER_SIZE + 2);
 //    public static final int BLOCK_SIZE = 30;
 
+    // initialize the game features (used for screen features)
     public SpriteBatch batch;
     public BitmapFont font;
     public FitViewport viewport;
@@ -44,7 +45,7 @@ public class Tetris extends Game {
         super.render();
     }
 
-    // this seems right
+    // destroy the ui when the screen is closed
     @Override
     public void dispose() {
         super.dispose();

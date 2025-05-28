@@ -37,6 +37,7 @@ public class SettingsScreen implements Screen {
         VisLabel titleLabel = new VisLabel("Settings");
         titleLabel.setFontScale(2.2f);
 
+        // das slider
         dasSlider = new VisSlider(0, 500, 1, false);
         dasSlider.setValue(config.DAS_DELAY);
         dasValueLabel = new VisLabel("DAS: " + dasSlider.getValue());
@@ -58,13 +59,14 @@ public class SettingsScreen implements Screen {
             return false;
         });
 
+        // das
         Table dasTable = new Table();
         dasTable.add(new VisLabel("Delayed Auto Shift (DAS)")).padRight(18f);
         dasTable.add(dasSlider).width(240);
         dasTable.add(dasValueLabel).width(70).padLeft(8f);
 
 
-        // main table
+        // arr
         Table arrTable = new Table();
         arrTable.add(new VisLabel("Auto Repeat Rate (ARR)")).padRight(18f);
         arrTable.add(arrSlider).width(240);
@@ -74,6 +76,7 @@ public class SettingsScreen implements Screen {
         VisCheckBox animationBox = new VisCheckBox("Display Animations");
         animationBox.setChecked(true);
 
+        // show ghost piece
         VisCheckBox showGhostPiece = new VisCheckBox("Show Ghost Pieces");
         showGhostPiece.setChecked(config.showGhostPiece);
         showGhostPiece.addListener(event -> {
