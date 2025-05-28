@@ -6,6 +6,10 @@ import lombok.Getter;
 
 import static me.runthebot.tetris.Tetris.BUFFER_SIZE;
 
+/**
+ * Represents the Tetris playfield grid, including cell occupancy and color data.
+ * Provides methods for locking pieces, checking for filled lines, and rendering the grid.
+ */
 public class Grid {
     @Getter
     private final int width;
@@ -14,10 +18,12 @@ public class Grid {
     private final boolean[][] cells;
     private final Color[][] colors;
 
-    // Draw grid lines
-    // Calculate offset to center the grid
+    // Offset to center the grid in the viewport
     public static float CENTER_OFFSET = (Tetris.VIEWPORT_WIDTH - Tetris.GRID_WIDTH)/2;
 
+    /**
+     * Constructs a new Grid with the given width and height.
+     */
     public Grid(int width, int height) {
         this.width = width;
         this.height = height;
@@ -26,17 +32,20 @@ public class Grid {
     }
 
     /**
-     * Checks if a cell is occupied.
-     * @param x
-     * @param y
-     * @return true if the cell is occupied, else false
+     * Checks if a cell is occupied or out of bounds.
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @return true if the cell is occupied or out of bounds, else false
      */
     public boolean isOccupied(int x, int y) {
         if (x < 0 || x >= width || y < 0 || y >= height) return true;
         return cells[y][x];
     }
 
-    // locks a piece on the grid
+    /**
+     * Locks a piece onto the grid, marking its cells as occupied and coloring them.
+     * @param piece The piece to lock
+     */
     public void lockPiece(Piece piece) {
         boolean[][] shape = piece.getGrid();
         Color color = piece.getType().getColor();

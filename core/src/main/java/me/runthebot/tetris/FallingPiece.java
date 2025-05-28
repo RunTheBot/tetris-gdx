@@ -6,6 +6,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 
 
+/**
+ * Represents a Tetrimino piece that falls in the background of the menu screen for animation.
+ * Used for visual effects, not for gameplay logic.
+ */
 public class FallingPiece {
     private final Tetrimino type;
     private Vector2 position;
@@ -15,6 +19,12 @@ public class FallingPiece {
     private final float rotationSpeed;
     private final float BLOCK_SIZE = 32;
 
+    /**
+     * Constructs a new FallingPiece for menu animation.
+     * @param type The Tetrimino type
+     * @param position The starting position
+     * @param velocity The falling velocity
+     */
     public FallingPiece(Tetrimino type, Vector2 position, Vector2 velocity) {
         this.type = type;
         this.position = position;
@@ -33,6 +43,7 @@ public class FallingPiece {
         position.add(0, velocity.y * delta);
         rotation += rotationSpeed * delta;
 
+        // If the piece falls below the screen, reset its position to the top
         if (position.y < -BLOCK_SIZE * type.getShape().length) {
             position.y = Gdx.graphics.getHeight();
             position.x = Gdx.graphics.getWidth() / 2f + (float) (Math.random() * 200 - 100);
@@ -40,8 +51,8 @@ public class FallingPiece {
     }
 
     /**
-     * Renders the falling piece using the ShapeRenderer
-     * @param renderer
+     * Renders the falling piece using the ShapeRenderer.
+     * @param renderer The ShapeRenderer to use
      */
     public void render(ShapeRenderer renderer) {
         renderer.setColor(color);

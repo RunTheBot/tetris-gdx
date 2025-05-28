@@ -7,16 +7,24 @@ import lombok.Setter;
 
 import static me.runthebot.tetris.Tetris.BUFFER_SIZE;
 
+/**
+ * Represents a Tetrimino piece in the game, including its type, position, rotation, and grid shape.
+ * Provides movement, rotation, and rendering logic for gameplay.
+ */
 @Setter
 @Getter
 public class Piece {
     private final Tetrimino type;
     private boolean[][] grid;
-    // Position getters
+    // Position of the piece on the grid
     private int x, y;
-    // Rotation getter and setter
+    // Current rotation state (0-3)
     private int rotation;
 
+    /**
+     * Constructs a new Piece of the given Tetrimino type at the default spawn position.
+     * @param type The Tetrimino type
+     */
     public Piece(Tetrimino type) {
         this.type = type;
         this.grid = type.getShape();
@@ -25,10 +33,10 @@ public class Piece {
     }
 
     /**
-     * Allows for a block to be moved
-     * @param dx
-     * @param dy
-     * @param field
+     * Attempts to move the piece by the given delta.
+     * @param dx X movement
+     * @param dy Y movement
+     * @param field The grid to check for collisions
      * @return true if the move was successful, else false
      */
     public boolean move(int dx, int dy, Grid field) {
@@ -43,8 +51,8 @@ public class Piece {
     }
 
     /**
-     * Allows for piece rotation
-     * @param field
+     * Attempts to rotate the piece clockwise.
+     * @param field The grid to check for collisions
      * @return true if the rotation worked, else false
      */
     public boolean rotate(Grid field) {

@@ -2,6 +2,10 @@ package me.runthebot.tetris;
 import lombok.Getter;
 import com.badlogic.gdx.graphics.Color;
 
+/**
+ * Enum representing all 7 Tetrimino types, their colors, and their shapes.
+ * Provides methods for shape rotation and visual representation.
+ */
 @Getter
 public enum Tetrimino {
     I(Color.CYAN, new String[]{
@@ -44,13 +48,20 @@ public enum Tetrimino {
     private final String[] shapeLines;
     private final boolean[][] shape;
 
+    /**
+     * Constructs a Tetrimino with the given color and shape definition.
+     * @param color The color of the piece
+     * @param shapeLines The string array representing the shape
+     */
     Tetrimino(Color color, String[] shapeLines) {
         this.color = color;
         this.shapeLines = shapeLines;
         this.shape = convertToBooleanGrid(shapeLines);
     }
 
-    // grid of booleans to represent the grid blocks
+    /**
+     * Converts a string array to a boolean grid for shape representation.
+     */
     private boolean[][] convertToBooleanGrid(String[] lines) {
         int rows = lines.length;
         int cols = lines[0].length();
@@ -64,7 +75,9 @@ public enum Tetrimino {
         return grid;
     }
 
-    // visually prints piece as a string
+    /**
+     * Returns a visual string representation of the piece.
+     */
     public String toVisualString() {
         StringBuilder sb = new StringBuilder();
         for (String line : shapeLines) {
@@ -73,8 +86,10 @@ public enum Tetrimino {
         return sb.toString();
     }
 
+    /**
+     * Returns a deep copy of the shape grid to avoid mutation.
+     */
     public boolean[][] getShape() {
-        // Return a deep copy to avoid mutation
         int rows = shape.length;
         int cols = shape[0].length;
         boolean[][] copy = new boolean[rows][cols];
@@ -83,6 +98,11 @@ public enum Tetrimino {
         return copy;
     }
 
+    /**
+     * Returns the shape grid rotated by the given number of 90-degree steps.
+     * @param rotation Number of 90-degree rotations
+     * @return Rotated shape grid
+     */
     public boolean[][] getShape(int rotation) {
         boolean[][] result = getShape();
         for (int i = 0; i < rotation % 4; i++) {
@@ -91,6 +111,9 @@ public enum Tetrimino {
         return result;
     }
 
+    /**
+     * Rotates a boolean grid 90 degrees clockwise.
+     */
     private boolean[][] rotate90(boolean[][] input) {
         int rows = input.length;
         int cols = input[0].length;
