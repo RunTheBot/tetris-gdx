@@ -15,6 +15,10 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.*;
 
+/**
+ * Implements the "Marathon" or main game mode for Tetris.
+ * Handles game logic, rendering, and user input for the main gameplay loop.
+ */
 public class GameScreen implements Screen {
     final Tetris game;
 

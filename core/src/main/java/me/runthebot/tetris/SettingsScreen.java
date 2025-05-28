@@ -9,6 +9,10 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kotcrab.vis.ui.widget.*;
 
+/**
+ * Screen for adjusting game settings such as DAS, ARR, and ghost piece visibility.
+ * Uses sliders and labels for user interaction.
+ */
 public class SettingsScreen implements Screen {
     private final Tetris game;
     private final ConfigManager configManager;

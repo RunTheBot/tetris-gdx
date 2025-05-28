@@ -13,6 +13,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
 import java.util.*;
 
+/**
+ * Implements the "Arcade" game mode for Tetris.
+ * Handles arcade-specific rules, scoring, and rendering.
+ */
 public class ArcadeScreen implements Screen {
     final Tetris game;
 

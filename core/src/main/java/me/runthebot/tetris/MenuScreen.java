@@ -18,6 +18,10 @@ import com.kotcrab.vis.ui.widget.VisWindow;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The main menu screen for the Tetris game.
+ * Displays animated falling pieces and UI for selecting game modes.
+ */
 public class MenuScreen implements Screen {
     private final Tetris game;
     private Stage stage;

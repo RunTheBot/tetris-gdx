@@ -12,6 +12,10 @@ import com.kotcrab.vis.ui.widget.VisSlider;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.kotcrab.vis.ui.widget.VisWindow;
 
+/**
+ * Screen displayed when the player loses or finishes a game mode.
+ * Shows final stats and options to retry or return to the menu.
+ */
 public class GameOverScreen implements Screen {
     private final Tetris game;
     private Stage stage;
