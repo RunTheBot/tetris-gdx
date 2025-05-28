@@ -171,6 +171,9 @@ public class SprintScreen implements Screen {
         spriteBatch.end();
     }
 
+    /**
+     * Renders the next piece
+     */
     private void renderNextPiece() {
         if (nextPieces.isEmpty()) return;
 
@@ -183,7 +186,7 @@ public class SprintScreen implements Screen {
         // Next piece position - on the right side of the grid
         float gridOffset = Grid.CENTER_OFFSET;
         float gridCenterX = gridOffset + Tetris.GRID_WIDTH / 2.0f; // Center of the grid with offset
-        float previewX = gridCenterX + 5.0f; // Position right of the grid
+        float previewX = gridCenterX+6; // Position right of the grid
         // Position next piece at the top of the visible area
         float previewY = 2;
 
@@ -194,27 +197,6 @@ public class SprintScreen implements Screen {
         shapeRenderer.setColor(0.2f, 0.2f, 0.2f, 1);
         shapeRenderer.rect(previewX - 0.25f, 0.25f, 4.5f, 6);
 
-        // Draw "NEXT" text border
-        shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(previewX - 0.25f, 6.5f, 4.5f, 1);
-
-        // Draw "NEXT" text using shapes
-        shapeRenderer.setColor(0, 0, 0, 1);
-        // N
-        shapeRenderer.rectLine(previewX + 0.5f, 7.0f, previewX + 0.5f, 7.35f, 0.15f);
-        shapeRenderer.rectLine(previewX + 0.5f, 7.35f, previewX + 1.0f, 7.0f, 0.15f);
-        shapeRenderer.rectLine(previewX + 1.0f, 7.0f, previewX + 1.0f, 7.35f, 0.15f);
-        // E
-        shapeRenderer.rectLine(previewX + 1.3f, 7.0f, previewX + 1.3f, 7.35f, 0.15f);
-        shapeRenderer.rectLine(previewX + 1.3f, 7.0f, previewX + 1.8f, 7.0f, 0.15f);
-        shapeRenderer.rectLine(previewX + 1.3f, 7.2f, previewX + 1.7f, 7.2f, 0.15f);
-        shapeRenderer.rectLine(previewX + 1.3f, 7.35f, previewX + 1.8f, 7.35f, 0.15f);
-        // X
-        shapeRenderer.rectLine(previewX + 2.1f, 7.0f, previewX + 2.6f, 7.35f, 0.15f);
-        shapeRenderer.rectLine(previewX + 2.1f, 7.35f, previewX + 2.6f, 7.0f, 0.15f);
-        // T
-        shapeRenderer.rectLine(previewX + 2.9f, 7.35f, previewX + 3.4f, 7.35f, 0.15f);
-        shapeRenderer.rectLine(previewX + 3.15f, 7.35f, previewX + 3.15f, 7.0f, 0.15f);
 
         // reset to piece color
         shapeRenderer.setColor(color);
@@ -228,13 +210,14 @@ public class SprintScreen implements Screen {
             for (int col = 0; col < shape[row].length; col++) {
                 if (shape[row][col]) {
                     float blockX = previewX + col + offsetX;
-                    float blockY = previewY -row + offsetY;
+                    float blockY = previewY - row + offsetY;
                     shapeRenderer.rect(blockX, blockY, 1, 1);
                 }
             }
         }
         shapeRenderer.end();
     }
+
 
     /**
      * Generates a new shuffled bag of all 7 Tetriminos and adds them to the queue
@@ -543,36 +526,14 @@ public class SprintScreen implements Screen {
         // Hold position - on the left side of the grid
         float gridOffset = Grid.CENTER_OFFSET     ;
         float gridCenterX = gridOffset + Tetris.GRID_WIDTH / 2.0f; // Center of the grid with offset
-        float holdX = gridCenterX - 9.0f; // Position left of the grid
+        float holdX = gridCenterX - 10; // Position left of the grid
         float holdY = 2;
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         // Draw a background rectangle for the hold piece area
         shapeRenderer.setColor(0.2f, 0.2f, 0.2f, 1);
-        shapeRenderer.rect(holdX - 0.25f, 0.25f, 4.5f, 6);        // Draw "HOLD" text border
-        shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(holdX - 0.25f, 6.5f, 4.5f, 1);
-
-        // Draw "HOLD" text using shapes
-        shapeRenderer.setColor(0, 0, 0, 1);
-        // H
-        shapeRenderer.rectLine(holdX + 0.5f, 7.0f, holdX + 0.5f, 7.35f, 0.15f);
-        shapeRenderer.rectLine(holdX + 0.5f, 7.2f, holdX + 1.0f, 7.2f, 0.15f);
-        shapeRenderer.rectLine(holdX + 1.0f, 7.0f, holdX + 1.0f, 7.35f, 0.15f);
-        // O
-        shapeRenderer.rectLine(holdX + 1.3f, 7.0f, holdX + 1.3f, 7.35f, 0.15f);
-        shapeRenderer.rectLine(holdX + 1.3f, 7.0f, holdX + 1.8f, 7.0f, 0.15f);
-        shapeRenderer.rectLine(holdX + 1.8f, 7.0f, holdX + 1.8f, 7.35f, 0.15f);
-        shapeRenderer.rectLine(holdX + 1.3f, 7.35f, holdX + 1.8f, 7.35f, 0.15f);
-        // L
-        shapeRenderer.rectLine(holdX + 2.1f, 7.0f, holdX + 2.1f, 7.35f, 0.15f);
-        shapeRenderer.rectLine(holdX + 2.1f, 7.0f, holdX + 2.6f, 7.0f, 0.15f);
-        // D
-        shapeRenderer.rectLine(holdX + 2.9f, 7.0f, holdX + 2.9f, 7.35f, 0.15f);
-        shapeRenderer.rectLine(holdX + 2.9f, 7.0f, holdX + 3.3f, 7.1f, 0.15f);
-        shapeRenderer.rectLine(holdX + 3.3f, 7.1f, holdX + 3.3f, 7.25f, 0.15f);
-        shapeRenderer.rectLine(holdX + 3.3f, 7.25f, holdX + 2.9f, 7.35f, 0.15f);
+        shapeRenderer.rect(holdX - 0.25f, 0.25f, 4.5f, 6);
 
         // Set color to piece color (dimmed if can't hold)
         if (canHold) {
@@ -600,6 +561,7 @@ public class SprintScreen implements Screen {
         }
         shapeRenderer.end();
     }
+
 
     @Override public void show() {}
     @Override public void resize(int width, int height) {
