@@ -14,6 +14,12 @@ public abstract class BaseGameScreen implements Screen {
     protected final ConfigManager configManager = ConfigManager.getInstance();
     protected final GameConfig config = configManager.getConfig();
 
+    // Track key press times and last move times
+    protected long leftPressTime = 0;
+    protected long rightPressTime = 0;
+    protected long lastLeftMoveTime = 0;
+    protected long lastRightMoveTime = 0;
+
     protected final ShapeRenderer shapeRenderer;
     protected final SpriteBatch spriteBatch;
     protected final BitmapFont font;
@@ -26,7 +32,7 @@ public abstract class BaseGameScreen implements Screen {
     protected Queue<Tetrimino> nextPieces;
 
     protected long lastFallTime;
-    protected float gravity = 1f; // TODO: change
+    protected float gravity = 1f;
 
     protected boolean gameOver = false;
 
