@@ -2,83 +2,28 @@ package me.runthebot.tetris;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
-
-import java.util.*;
 
 /**
  * Implements the "Marathon" or main game mode for Tetris.
  * Handles game logic, rendering, and user input for the main gameplay loop.
  */
-public class GameScreen implements Screen {
-    final Tetris game;
-
-
-    ConfigManager configManager = ConfigManager.getInstance();
-    GameConfig config = configManager.getConfig();
-
-    // Track key press times and last move times
-    private long leftPressTime = 0;
-    private long rightPressTime = 0;
-    private long lastLeftMoveTime = 0;
-    private long lastRightMoveTime = 0;
-
-    private final ShapeRenderer shapeRenderer;
-    private final SpriteBatch spriteBatch;
-    private final BitmapFont font;
-
-    private final Grid grid;
-    private Piece currentPiece;
-    private Piece ghostPiece;  // Ghost piece for landing preview
-    private Piece holdPiece;   // Hold piece
-    private boolean canHold = true;  // Flag to prevent multiple holds per piece
-    private Queue<Tetrimino> nextPieces;
-
-    private long lastFallTime;
-    private float gravity = 1f; // Tiles per second
-
-    // Lock delay variables
-    private boolean lockDelayActive = false;
-    private long lockDelayStartTime = 0;
-    private final long LOCK_DELAY = 500; // Lock delay in milliseconds
-    private int lockResets = 0;
-    private final int MAX_LOCK_RESETS = 15;
-
-    private boolean gameOver = false; // Track game over state
-
-    // Score tracking variables
+public class GameScreen extends BaseGameScreen {
+    // Game stats tracking specific to Marathon mode
     private int score = 0;
     private int level = 1;
     private int linesCleared = 0;
-
-    // Additional stats
     private long startTime;
     private long currentTime;
-    private float currentSpeed = 0; // Current pieces per second
-    private float maxSpeed = 0; // Maximum speed achieved
-    private int highScore = 0; // High score
+    private float currentSpeed = 0;
+    private float maxSpeed = 0;
+    private int highScore = 0;
 
     public GameScreen(final Tetris game) {
-        this.game = game;
-
-        shapeRenderer = new ShapeRenderer();
-        spriteBatch = new SpriteBatch();
-        font = new BitmapFont();
-        grid = new Grid(Tetris.GRID_WIDTH, Tetris.GRID_HEIGHT);
-        nextPieces = new LinkedList<>();
-        fillBag(); // Initialize with first bag
-        spawnNewPiece();
-        lastFallTime = TimeUtils.millis();
-
+        super(game);
+        
         // Initialize stats tracking
         startTime = TimeUtils.millis();
         currentTime = 0;
@@ -114,20 +59,15 @@ public class GameScreen implements Screen {
         game.camera.update();
         shapeRenderer.setProjectionMatrix(game.camera.combined);
 
-        // Begin shape rendering
-//        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-
         // Render game elements
         grid.render(shapeRenderer);
 
         if (config.showGhostPiece) {
             // Render ghost piece with transparency
-            ghostPiece.render(shapeRenderer, 0.3f);  // Pass alpha value for transparency
+            ghostPiece.render(shapeRenderer, 0.3f);
         }
 
         currentPiece.render(shapeRenderer);
-
-        // End shape rendering started in this method
         shapeRenderer.end();
 
         // Hold and Next pieces have their own begin/end calls
@@ -138,9 +78,6 @@ public class GameScreen implements Screen {
         renderUI();
     }
 
-    /**
-     * Renders score, level, and lines cleared information
-     */
     private void renderUI() {
         spriteBatch.begin();
         font.setColor(Color.WHITE);
@@ -172,121 +109,7 @@ public class GameScreen implements Screen {
         spriteBatch.end();
     }
 
-    private void renderNextPiece() {
-        if (nextPieces.isEmpty()) return;
-
-        // get the next piece
-        Tetrimino nextPiece = nextPieces.peek();
-
-        boolean[][] shape = nextPiece.getShape();
-        Color color = nextPiece.getColor();
-
-        // Next piece position - on the right side of the grid
-        float gridOffset = Grid.CENTER_OFFSET;
-        float gridCenterX = gridOffset + Tetris.GRID_WIDTH / 2.0f; // Center of the grid with offset
-        float previewX = gridCenterX+6; // Position right of the grid
-        // Position next piece at the top of the visible area
-        float previewY = 2;
-
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(color);
-
-        // Draw a background rectangle for the next piece area
-        shapeRenderer.setColor(0.2f, 0.2f, 0.2f, 1);
-        shapeRenderer.rect(previewX - 0.25f, 0.25f, 4.5f, 6);
-
-
-        // reset to piece color
-        shapeRenderer.setColor(color);
-
-        // Center the piece in the preview area based on its width
-        float offsetX = (4 - shape[0].length) / 2.0f;
-        float offsetY = (4 - shape.length) / 2.0f;
-
-        // render the next piece
-        for (int row = 0; row < shape.length; row++) {
-            for (int col = 0; col < shape[row].length; col++) {
-                if (shape[row][col]) {
-                    float blockX = previewX + col + offsetX;
-                    float blockY = previewY - row + offsetY;
-                    shapeRenderer.rect(blockX, blockY, 1, 1);
-                }
-            }
-        }
-        shapeRenderer.end();
-    }
-
-    /**
-     * Generates a new shuffled bag of all 7 Tetriminos and adds them to the queue
-     */
-    private void fillBag() {
-        List<Tetrimino> bag = new ArrayList<>(Arrays.asList(Tetrimino.values()));
-        Collections.shuffle(bag);
-        nextPieces.addAll(bag);
-    }
-
-    private void spawnNewPiece() {
-        // Check if we need to refill the bag
-        if (nextPieces.size() < 7) {
-            fillBag();
-        }
-
-        // Get the next piece from the queue
-        Tetrimino t = nextPieces.poll();
-        currentPiece = new Piece(t);
-        ghostPiece = new Piece(t);  // Create ghost piece with the same shape
-
-        updateGhostPiece();  // Position the ghost
-
-        lockResets = 0; // Reset lock resets
-        lockDelayActive = false; // Reset lock delay active
-
-        // Game over check: if the new piece collides immediately, game over
-        if (!isValidPosition(currentPiece)) {
-            gameOver = true;
-        }
-    }
-
-    /**
-     * Checks if the piece's current position is valid (not colliding or out of bounds)
-     */
-    private boolean isValidPosition(Piece piece) {
-        boolean[][] shape = piece.getShape();
-        int px = piece.getX();
-        int py = piece.getY();
-        for (int row = 0; row < shape.length; row++) {
-            for (int col = 0; col < shape[row].length; col++) {
-                if (shape[row][col]) {
-                    int x = px + col;
-                    int y = py + row;
-                    // Check bounds
-                    if (x < 0 || x >= Tetris.GRID_WIDTH || y < 0 || y >= Tetris.GRID_HEIGHT) {
-                        return false;
-                    }
-                    // Check collision with locked blocks
-                    if (grid.isOccupied(x, y)) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Updates the ghost piece to show where the current piece would land
-     */
-    private void updateGhostPiece() {
-        // Create a fresh copy of the current piece to ensure correct shape/rotation
-        ghostPiece = new Piece(currentPiece.getType());
-        ghostPiece.setRotation(currentPiece.getRotation());
-        ghostPiece.setPosition(currentPiece.getX(), currentPiece.getY());
-
-        // Drop the ghost piece as far as it can go
-        while (ghostPiece.move(0, 1, grid)) { }
-    }
-
-    public void placePiece(){
+    public void placePiece() {
         grid.lockPiece(currentPiece);
 
         // Check for line clears after locking the piece
@@ -332,9 +155,6 @@ public class GameScreen implements Screen {
         canHold = true; // Reset the hold flag after placing a piece
     }
 
-    /**
-     * Updates gravity (fall speed) based on current level
-     */
     private void updateGravity() {
         // Classic Tetris formula: gravity increases with level
         gravity = gravity + (level - 1) * 0.05f;
@@ -353,10 +173,8 @@ public class GameScreen implements Screen {
 
         // Hard drop (Space key)
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            currentPiece.hardDrop(grid); // No need to store the return value
-
+            currentPiece.hardDrop(grid);
             placePiece();
-
             return;
         }
 
@@ -484,8 +302,6 @@ public class GameScreen implements Screen {
                     lockDelayActive = true;
                     lockDelayStartTime = TimeUtils.millis();
                 }
-                // Note: lastFallTime is not reset here because the piece didn't fall.
-                // The gravity timer effectively pauses while the piece is landed and lock delay is potentially active.
             }
         }
 
@@ -494,28 +310,21 @@ public class GameScreen implements Screen {
             // Check if the lock delay time has passed or max resets reached
             if (TimeUtils.millis() - lockDelayStartTime > LOCK_DELAY || lockResets >= MAX_LOCK_RESETS) {
                 // Before placing, make a final check if the piece can move down
-                // This handles scenarios like a line clear opening space below
                 if (!currentPiece.move(0, 1, grid)) {
                     // Still cannot move down, so place the piece
-                    placePiece(); // This method should handle resetting lockDelayActive and lockResets
+                    placePiece(); 
                 } else {
-                    // Piece was able to move down (e.g., space cleared below)
-                    // It has now moved down one step.
-                    lastFallTime = TimeUtils.millis(); // Reset fall time as it moved
-                    lockDelayActive = false;           // No longer in lock delay
-                    lockResets = 0;                    // Resets are cleared as it moved instead of locking
+                    // Piece was able to move down
+                    lastFallTime = TimeUtils.millis(); 
+                    lockDelayActive = false;           
+                    lockResets = 0;                    
                     updateGhostPiece();
-                    // The piece has already been moved down by currentPiece.move(0,1,grid)
                 }
             }
         }
     }
 
-    /**
-     * Holds the current piece, allowing the player to swap it with the next piece.
-     * The held piece is stored in the holdPiece variable, and the current piece is replaced
-     * by a new piece from the nextPieces queue.
-     */    private void holdPiece() {
+    private void holdPiece() {
         if (!canHold) return; // Can't hold twice in a row
 
         Tetrimino currentType = currentPiece.getType();
@@ -538,66 +347,18 @@ public class GameScreen implements Screen {
         canHold = false; // Prevent holding again until next piece
     }
 
-    /**
-     * Renders the hold piece
-     */
-    private void renderHoldPiece() {
-        if (holdPiece == null) return;
+    private void updateGhostPiece() {
+        // Create a fresh copy of the current piece to ensure correct shape/rotation
+        ghostPiece = new Piece(currentPiece.getType());
+        ghostPiece.setRotation(currentPiece.getRotation());
+        ghostPiece.setPosition(currentPiece.getX(), currentPiece.getY());
 
-        boolean[][] shape = holdPiece.getType().getShape();
-        Color color = holdPiece.getType().getColor();
-
-        // Hold position - on the left side of the grid
-        float gridOffset = Grid.CENTER_OFFSET     ;
-        float gridCenterX = gridOffset + Tetris.GRID_WIDTH / 2.0f; // Center of the grid with offset
-        float holdX = gridCenterX - 10; // Position left of the grid
-        float holdY = 2;
-
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-
-        // Draw a background rectangle for the hold piece area
-        shapeRenderer.setColor(0.2f, 0.2f, 0.2f, 1);
-        shapeRenderer.rect(holdX - 0.25f, 0.25f, 4.5f, 6);
-
-        // Set color to piece color (dimmed if can't hold)
-        if (canHold) {
-            shapeRenderer.setColor(color);
-        } else {
-            // Dimmed version of the color
-            Color dimmed = new Color(color);
-            dimmed.a = 0.5f;
-            shapeRenderer.setColor(dimmed);
-        }
-
-        // Center the piece in the hold area based on its width
-        float offsetX = (4 - shape[0].length) / 2.0f;
-        float offsetY = (4 - shape.length) / 2.0f;
-
-        // Render the hold piece
-        for (int row = 0; row < shape.length; row++) {
-            for (int col = 0; col < shape[row].length; col++) {
-                if (shape[row][col]) {
-                    float blockX = holdX + col + offsetX;
-                    float blockY = holdY -row + offsetY;
-                    shapeRenderer.rect(blockX, blockY, 1, 1);
-                }
-            }
-        }
-        shapeRenderer.end();
+        // Drop the ghost piece as far as it can go
+        while (ghostPiece.move(0, 1, grid)) { }
     }
 
     @Override public void show() {}
-    @Override public void resize(int width, int height) {
-        game.viewport.update(width, height);
-    }
     @Override public void pause() {}
     @Override public void resume() {}
     @Override public void hide() {}
-
-    @Override
-    public void dispose() {
-        shapeRenderer.dispose();
-        spriteBatch.dispose();
-        font.dispose();
-    }
 }

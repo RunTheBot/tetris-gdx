@@ -2,14 +2,10 @@ package me.runthebot.tetris;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
 import java.util.*;
 
@@ -17,52 +13,16 @@ import java.util.*;
  * Implements the "Arcade" game mode for Tetris.
  * Handles arcade-specific rules, scoring, and rendering.
  */
-public class ArcadeScreen implements Screen {
-    final Tetris game;
-
-
-    ConfigManager configManager = ConfigManager.getInstance();
-    GameConfig config = configManager.getConfig();
-
-    // Track key press times and last move times
-    private long leftPressTime = 0;
-    private long rightPressTime = 0;
-    private long lastLeftMoveTime = 0;
-    private long lastRightMoveTime = 0;
-
-    private final ShapeRenderer shapeRenderer;
-
-    private final Grid grid;
-    private Piece currentPiece;
-    private Piece ghostPiece;  // Ghost piece for landing preview
-    private Piece holdPiece;   // Hold piece
-    private boolean canHold = true;  // Flag to prevent multiple holds per piece
-    private Queue<Tetrimino> nextPieces;
-
-    private long lastFallTime;
-    private float gravity = 1f; // Tiles per second
-
-    private boolean gameOver = false; // Track game over state
-
-    // Lock delay variables
-    private boolean lockDelayActive = false;
-    private long lockDelayStartTime = 0;
-    private final long LOCK_DELAY = 500; // Lock delay in milliseconds
-    private int lockResets = 0;
-    private final int MAX_LOCK_RESETS = 15; // Maximum number of lock delay resets
-
-    // Game stats
-    private int linesCleared = 0; // Track lines cleared
-    private int score = 0; // Track player's score
-    private int level = 1; // Track current level
-    private long startTime; // When the game started
-    private long currentTime; // Current game time
-    private float currentSpeed = 0; // Current pieces per second
-    private float maxSpeed = 0; // Maximum speed achieved
-    private int highScore = 0; // High score (points)
-
-    private final BitmapFont font;
-    private final SpriteBatch spriteBatch;
+public class ArcadeScreen extends BaseGameScreen {
+    // Game stats specific to Arcade mode
+    private int linesCleared = 0;
+    private int score = 0;
+    private int level = 1;
+    private long startTime;
+    private long currentTime;
+    private float currentSpeed = 0;
+    private float maxSpeed = 0;
+    private int highScore = 0;
 
     // Power up/down system
     private static final int POWER_SPAWN_CHANCE = 50; // % chance per second
@@ -107,16 +67,7 @@ public class ArcadeScreen implements Screen {
     private long lastPowerSpawnCheck = 0;
 
     public ArcadeScreen(final Tetris game) {
-        this.game = game;
-
-        shapeRenderer = new ShapeRenderer();
-        font = new BitmapFont();
-        spriteBatch = new SpriteBatch();
-        grid = new Grid(Tetris.GRID_WIDTH, Tetris.GRID_HEIGHT);
-        nextPieces = new LinkedList<>();
-        fillBag(); // Initialize with first bag
-        spawnNewPiece();
-        lastFallTime = TimeUtils.millis();
+        super(game);
 
         // Initialize stats tracking
         startTime = TimeUtils.millis();
@@ -294,7 +245,6 @@ public class ArcadeScreen implements Screen {
     }
 
     public void placePiece(){
-
         grid.lockPiece(currentPiece);
 
         // Calculate line clears with power effects
@@ -425,7 +375,8 @@ public class ArcadeScreen implements Screen {
      * Holds the current piece, allowing the player to swap it with the next piece.
      * The held piece is stored in the holdPiece variable, and the current piece is replaced
      * by a new piece from the nextPieces queue.
-     */    private void holdPiece() {
+     */
+    private void holdPiece() {
         if (!canHold) return; // Can't hold twice in a row
 
         Tetrimino currentType = currentPiece.getType();
@@ -448,90 +399,6 @@ public class ArcadeScreen implements Screen {
         canHold = false; // Prevent holding again until next piece
     }
 
-    /**
-     * Renders the hold piece
-     */
-    private void renderHoldPiece() {
-        if (holdPiece == null) return;
-
-        boolean[][] shape = holdPiece.getType().getShape();
-        Color color = holdPiece.getType().getColor();
-
-        // Hold position - on the left side of the grid
-        float gridOffset = Grid.CENTER_OFFSET     ;
-        float gridCenterX = gridOffset + Tetris.GRID_WIDTH / 2.0f; // Center of the grid with offset
-        float holdX = gridCenterX - 10; // Position left of the grid
-        float holdY = 2;
-
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-
-        // Draw a background rectangle for the hold piece area
-        shapeRenderer.setColor(0.2f, 0.2f, 0.2f, 1);
-        shapeRenderer.rect(holdX - 0.25f, 0.25f, 4.5f, 6);
-
-        // Set color to piece color (dimmed if can't hold)
-        if (canHold) {
-            shapeRenderer.setColor(color);
-        } else {
-            // Dimmed version of the color
-            Color dimmed = new Color(color);
-            dimmed.a = 0.5f;
-            shapeRenderer.setColor(dimmed);
-        }
-
-        // Center the piece in the hold area based on its width
-        float offsetX = (4 - shape[0].length) / 2.0f;
-        float offsetY = (4 - shape.length) / 2.0f;
-
-        // Render the hold piece
-        for (int row = 0; row < shape.length; row++) {
-            for (int col = 0; col < shape[row].length; col++) {
-                if (shape[row][col]) {
-                    float blockX = holdX + col + offsetX;
-                    float blockY = holdY -row + offsetY;
-                    shapeRenderer.rect(blockX, blockY, 1, 1);
-                }
-            }
-        }
-        shapeRenderer.end();
-    }
-
-
-    /**
-     * Generates a new shuffled bag of all 7 Tetriminos and adds them to the queue
-     */
-    private void fillBag() {
-        List<Tetrimino> bag = new ArrayList<>(Arrays.asList(Tetrimino.values()));
-        Collections.shuffle(bag);
-        nextPieces.addAll(bag);
-    }
-
-    private void spawnNewPiece() {
-        // Check if we need to refill the bag
-        if (nextPieces.size() < 7) {
-            fillBag();
-        }
-
-        // Get the next piece from the queue
-        Tetrimino t = nextPieces.poll();
-        currentPiece = new Piece(t);
-        ghostPiece = new Piece(t);  // Create ghost piece with the same shape
-
-        updateGhostPiece();  // Position the ghost
-
-        // Reset lock delay tracking for the new piece
-        lockResets = 0;
-        lockDelayActive = false;
-
-        // Game over check: if the new piece collides immediately, game over
-        if (!isValidPosition(currentPiece)) {
-            gameOver = true;
-        }
-    }
-
-    /**
-     * Updates the ghost piece to show where the current piece would land
-     */
     private void updateGhostPiece() {
         // Create a fresh copy of the current piece to ensure correct shape/rotation
         ghostPiece = new Piece(currentPiece.getType());
@@ -541,77 +408,6 @@ public class ArcadeScreen implements Screen {
         // Drop the ghost piece as far as it can go
         while (ghostPiece.move(0, 1, grid)) { }
     }
-
-    /**
-     * Checks if the piece's current position is valid (not colliding or out of bounds)
-     */
-    private boolean isValidPosition(Piece piece) {
-        boolean[][] shape = piece.getShape();
-        int px = piece.getX();
-        int py = piece.getY();
-        for (int row = 0; row < shape.length; row++) {
-            for (int col = 0; col < shape[row].length; col++) {
-                if (shape[row][col]) {
-                    int x = px + col;
-                    int y = py + row;
-                    // Check bounds
-                    if (x < 0 || x >= Tetris.GRID_WIDTH || y < 0 || y >= Tetris.GRID_HEIGHT) {
-                        return false;
-                    }
-                    // Check collision with locked blocks
-                    if (grid.isOccupied(x, y)) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-    private void renderNextPiece() {
-        if (nextPieces.isEmpty()) return;
-
-        // get the next piece
-        Tetrimino nextPiece = nextPieces.peek();
-
-        boolean[][] shape = nextPiece.getShape();
-        Color color = nextPiece.getColor();
-
-        // Next piece position - on the right side of the grid
-        float gridOffset = Grid.CENTER_OFFSET;
-        float gridCenterX = gridOffset + Tetris.GRID_WIDTH / 2.0f; // Center of the grid with offset
-        float previewX = gridCenterX+6; // Position right of the grid
-        // Position next piece at the top of the visible area
-        float previewY = 2;
-
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(color);
-
-        // Draw a background rectangle for the next piece area
-        shapeRenderer.setColor(0.2f, 0.2f, 0.2f, 1);
-        shapeRenderer.rect(previewX - 0.25f, 0.25f, 4.5f, 6);
-
-
-        // reset to piece color
-        shapeRenderer.setColor(color);
-
-        // Center the piece in the preview area based on its width
-        float offsetX = (4 - shape[0].length) / 2.0f;
-        float offsetY = (4 - shape.length) / 2.0f;
-
-        // render the next piece
-        for (int row = 0; row < shape.length; row++) {
-            for (int col = 0; col < shape[row].length; col++) {
-                if (shape[row][col]) {
-                    float blockX = previewX + col + offsetX;
-                    float blockY = previewY - row + offsetY;
-                    shapeRenderer.rect(blockX, blockY, 1, 1);
-                }
-            }
-        }
-        shapeRenderer.end();
-    }
-
 
     private void handleInput() {
         if (gameOver) return; // Ignore input if game is over
@@ -749,17 +545,7 @@ public class ArcadeScreen implements Screen {
     }
 
     @Override public void show() {}
-    @Override public void resize(int width, int height) {
-        game.viewport.update(width, height);
-    }
     @Override public void pause() {}
     @Override public void resume() {}
     @Override public void hide() {}
-
-    @Override
-    public void dispose() {
-        shapeRenderer.dispose();
-        font.dispose();
-        spriteBatch.dispose();
-    }
 }
