@@ -245,6 +245,9 @@ public class ArcadeScreen extends BaseGameScreen {
     }
 
     public void placePiece(){
+
+        collectPowers();
+
         grid.lockPiece(currentPiece);
 
         // Calculate line clears with power effects
