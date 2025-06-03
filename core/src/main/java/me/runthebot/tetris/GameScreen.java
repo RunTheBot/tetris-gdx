@@ -23,7 +23,7 @@ public class GameScreen extends BaseGameScreen {
 
     public GameScreen(final Tetris game) {
         super(game);
-        
+
         // Initialize stats tracking
         startTime = TimeUtils.millis();
         currentTime = 0;
@@ -336,12 +336,12 @@ public class GameScreen extends BaseGameScreen {
                 // Before placing, make a final check if the piece can move down
                 if (!currentPiece.move(0, 1, grid)) {
                     // Still cannot move down, so place the piece
-                    placePiece(); 
+                    placePiece();
                 } else {
                     // Piece was able to move down
-                    lastFallTime = TimeUtils.millis(); 
-                    lockDelayActive = false;           
-                    lockResets = 0;                    
+                    lastFallTime = TimeUtils.millis();
+                    lockDelayActive = false;
+                    lockResets = 0;
                     updateGhostPiece();
                 }
             }
