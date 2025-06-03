@@ -51,20 +51,30 @@ public class Piece {
     }
 
     /**
-     * Attempts to rotate the piece clockwise.
+     * Attempts to rotate the piece clockwise using SRS (Super Rotation System).
      * @param field The grid to check for collisions
      * @return true if the rotation worked, else false
      */
     public boolean rotate(Grid field) {
-        boolean[][] rotated = rotate90(grid);
-        if (!collides(x, y, rotated, field)) {
-            grid = rotated;
-            rotation = (rotation + 1) % 4;
-            return true;
-        } else {
-            // TODO: SRS+ kicks
-            return false;
-        }
+        return SRS.attemptRotation(this, field, true);
+    }
+
+    /**
+     * Attempts to rotate the piece counterclockwise using SRS (Super Rotation System).
+     * @param field The grid to check for collisions
+     * @return true if the rotation worked, else false
+     */
+    public boolean rotateCounterclockwise(Grid field) {
+        return SRS.attemptRotation(this, field, false);
+    }
+
+    /**
+     * Attempts to rotate the piece 180 degrees using SRS (Super Rotation System).
+     * @param field The grid to check for collisions
+     * @return true if the rotation worked, else false
+     */
+    public boolean rotate180(Grid field) {
+        return SRS.attempt180Rotation(this, field);
     }
 
     /**
@@ -213,6 +223,14 @@ public class Piece {
 
         this.grid = newGrid;
         this.rotation = rotation;
+    }
+
+    /**
+     * Sets the grid shape of the piece (used by SRS)
+     * @param grid The new grid shape
+     */
+    public void setGrid(boolean[][] grid) {
+        this.grid = grid;
     }
 
     /**

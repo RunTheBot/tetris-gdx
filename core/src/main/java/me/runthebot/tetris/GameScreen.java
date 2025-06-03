@@ -267,9 +267,33 @@ public class GameScreen extends BaseGameScreen {
             rightPressTime = 0;  // Reset only when key is released
         }
 
-        // Rotation
+        // Rotation - Clockwise (UP arrow)
         if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
             if (currentPiece.rotate(grid)) {
+                updateGhostPiece();
+                // Reset lock delay when piece is rotated
+                if (lockDelayActive && lockResets < MAX_LOCK_RESETS) {
+                    lockDelayStartTime = TimeUtils.millis();
+                    lockResets++;
+                }
+            }
+        }
+
+        // Rotation - Counterclockwise (Z key)
+        if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
+            if (currentPiece.rotateCounterclockwise(grid)) {
+                updateGhostPiece();
+                // Reset lock delay when piece is rotated
+                if (lockDelayActive && lockResets < MAX_LOCK_RESETS) {
+                    lockDelayStartTime = TimeUtils.millis();
+                    lockResets++;
+                }
+            }
+        }
+
+        // Rotation - 180 degrees (A key)
+        if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
+            if (currentPiece.rotate180(grid)) {
                 updateGhostPiece();
                 // Reset lock delay when piece is rotated
                 if (lockDelayActive && lockResets < MAX_LOCK_RESETS) {
