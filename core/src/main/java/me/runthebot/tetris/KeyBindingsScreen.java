@@ -5,7 +5,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -42,9 +41,6 @@ public class KeyBindingsScreen implements Screen {
     public void show() {
         ScreenViewport viewport = new ScreenViewport();
         stage = new Stage(viewport);
-
-        // Create a custom input processor to catch key presses during rebinding
-        setupInputProcessor();
 
         // Title
         VisLabel titleLabel = new VisLabel("Key Bindings");
@@ -97,8 +93,8 @@ public class KeyBindingsScreen implements Screen {
 
         stage.addActor(mainTable);
 
-        // Set the stage as the input processor
-        Gdx.input.setInputProcessor(stage);
+        // Set up the input processor with the stage
+        setupInputProcessor();
     }
 
     private void setupKeyBindingRows(Table keysTable) {
@@ -138,21 +134,45 @@ public class KeyBindingsScreen implements Screen {
     }
 
     private void setupInputProcessor() {
-        // Create a custom input processor to catch key presses for rebinding
-        Gdx.input.setInputProcessor(new InputAdapter() {
+        // We'll use an InputAdapter that only handles keyboard inputs for rebinding
+        InputAdapter keyBindingProcessor = new InputAdapter() {
             @Override
             public boolean keyDown(int keycode) {
                 if (currentRebindIndex >= 0) {
                     // Don't allow ESC to be bound as it's used to cancel
                     if (keycode != Input.Keys.ESCAPE) {
                         saveNewKeyBinding(currentRebindIndex, keycode);
+                        System.out.println("Key bound: " + Input.Keys.toString(keycode));
                     }
+
                     stopRebinding();
                     return true;
                 }
                 return false;
             }
-        });
+            
+            // Don't capture any mouse events
+            @Override
+            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                return false;
+            }
+            
+            @Override
+            public boolean mouseMoved(int screenX, int screenY) {
+                return false;
+            }
+        };
+        
+        // Use a multiplexer to combine the stage's input processor with our key binding processor
+        com.badlogic.gdx.InputMultiplexer multiplexer = new com.badlogic.gdx.InputMultiplexer();
+        multiplexer.addProcessor(stage); // Stage first to handle UI interactions
+        
+        // Only add the key binding processor if we're in rebinding mode
+        if (currentRebindIndex >= 0) {
+            multiplexer.addProcessor(keyBindingProcessor);
+        }
+        
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
     private void startRebinding(int index) {
@@ -168,9 +188,9 @@ public class KeyBindingsScreen implements Screen {
         if (currentRebindIndex >= 0) {
             keyButtons[currentRebindIndex].setColor(Color.WHITE);
             currentRebindIndex = -1;
-
-            // Restore stage as input processor
-            Gdx.input.setInputProcessor(stage);
+            
+            // Reset input processor to just the stage
+            setupInputProcessor();
         }
     }
 
