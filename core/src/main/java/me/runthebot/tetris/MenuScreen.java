@@ -90,6 +90,17 @@ public class MenuScreen implements Screen {
             return false;
         });
 
+        // button to show instructions
+        VisTextButton instructionsButton = new VisTextButton("How to Play");
+        instructionsButton.getLabel().setFontScale(2f);
+        instructionsButton.addListener(event -> {
+            if (instructionsButton.isPressed()) {
+                game.setScreen(new InstructionsScreen(game));
+                return true;
+            }
+            return false;
+        });
+
         // button to open settings menu
         VisTextButton settingsButton = new VisTextButton("Settings");
         settingsButton.getLabel().setFontScale(2f);
@@ -116,6 +127,7 @@ public class MenuScreen implements Screen {
         classicPlayButton.getColor().a = 0;
         sprintPlayButton.getColor().a = 0;
         arcadePlayButton.getColor().a = 0;
+        instructionsButton.getColor().a = 0;
         settingsButton.getColor().a = 0;
         quitButton.getColor().a = 0;
 
@@ -123,8 +135,9 @@ public class MenuScreen implements Screen {
         classicPlayButton.addAction(Actions.sequence(Actions.delay(0.5f), Actions.fadeIn(1f)));
         sprintPlayButton.addAction(Actions.sequence(Actions.delay(1f), Actions.fadeIn(1f)));
         arcadePlayButton.addAction(Actions.sequence(Actions.delay(1.5f), Actions.fadeIn(1f)));
-        settingsButton.addAction(Actions.sequence(Actions.delay(2f), Actions.fadeIn(1f)));
-        quitButton.addAction(Actions.sequence(Actions.delay(2.5f), Actions.fadeIn(1f)));
+        instructionsButton.addAction(Actions.sequence(Actions.delay(2f), Actions.fadeIn(1f)));
+        settingsButton.addAction(Actions.sequence(Actions.delay(2.5f), Actions.fadeIn(1f)));
+        quitButton.addAction(Actions.sequence(Actions.delay(3f), Actions.fadeIn(1f)));
 
         // create the main table
         Table table = new Table();
@@ -136,6 +149,7 @@ public class MenuScreen implements Screen {
         table.add(classicPlayButton).width(360).height(90).padBottom(30f).row();
         table.add(sprintPlayButton).width(360).height(90).padBottom(30f).row();
         table.add(arcadePlayButton).width(360).height(90).padBottom(30f).row();
+        table.add(instructionsButton).width(360).height(90).padBottom(30f).row();
         table.add(settingsButton).width(360).height(90).padBottom(30f).row();
         table.add(quitButton).width(360).height(90).padBottom(60f).row();
 
