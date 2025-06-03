@@ -150,28 +150,28 @@ public class KeyBindingsScreen implements Screen {
                 }
                 return false;
             }
-            
+
             // Don't capture any mouse events
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
                 return false;
             }
-            
+
             @Override
             public boolean mouseMoved(int screenX, int screenY) {
                 return false;
             }
         };
-        
+
         // Use a multiplexer to combine the stage's input processor with our key binding processor
         com.badlogic.gdx.InputMultiplexer multiplexer = new com.badlogic.gdx.InputMultiplexer();
         multiplexer.addProcessor(stage); // Stage first to handle UI interactions
-        
+
         // Only add the key binding processor if we're in rebinding mode
         if (currentRebindIndex >= 0) {
             multiplexer.addProcessor(keyBindingProcessor);
         }
-        
+
         Gdx.input.setInputProcessor(multiplexer);
     }
 
@@ -188,7 +188,7 @@ public class KeyBindingsScreen implements Screen {
         if (currentRebindIndex >= 0) {
             keyButtons[currentRebindIndex].setColor(Color.WHITE);
             currentRebindIndex = -1;
-            
+
             // Reset input processor to just the stage
             setupInputProcessor();
         }
