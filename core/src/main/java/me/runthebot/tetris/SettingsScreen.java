@@ -88,6 +88,16 @@ public class SettingsScreen implements Screen {
             return false;
         });
 
+        // button to access key bindings screen
+        VisTextButton keyBindingsButton = new VisTextButton("Key Bindings");
+        keyBindingsButton.addListener(event -> {
+            if (keyBindingsButton.isPressed()) {
+                game.setScreen(new KeyBindingsScreen(game));
+                return true;
+            }
+            return false;
+        });
+
         // button to go back to the main screen
         VisTextButton backButton = new VisTextButton("Back");
         backButton.addListener(event -> {
@@ -109,6 +119,7 @@ public class SettingsScreen implements Screen {
         table.add(arrTable).padBottom(32f).row();
         table.add(animationBox).padBottom(32f).row();
         table.add(showGhostPiece).padBottom(32f).row();
+        table.add(keyBindingsButton).width(180).height(60).padBottom(32f).row();
         table.add(backButton).width(180).height(60);
 
         stage.addActor(table);

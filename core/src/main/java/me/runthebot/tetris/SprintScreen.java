@@ -1,7 +1,6 @@
 package me.runthebot.tetris;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -155,21 +154,21 @@ public class SprintScreen extends BaseGameScreen {
 
         long currentTime = TimeUtils.millis();
 
-        // Hold piece (Shift key)
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_RIGHT)) {
+        // Hold piece (configured keys)
+        if (Gdx.input.isKeyJustPressed(config.KEY_HOLD) || Gdx.input.isKeyJustPressed(config.KEY_HOLD_ALT)) {
             holdPiece();
             return;
         }
 
-        // Hard drop (Space key)
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+        // Hard drop (configured key)
+        if (Gdx.input.isKeyJustPressed(config.KEY_HARD_DROP)) {
             currentPiece.hardDrop(grid);
             placePiece();
             return;
         }
 
-        // Soft drop (faster fall)
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+        // Soft drop (configured key)
+        if (Gdx.input.isKeyPressed(config.KEY_MOVE_DOWN)) {
             boolean moved = currentPiece.move(0, 1, grid);
             if (moved) {
                 updateGhostPiece();
@@ -181,8 +180,8 @@ public class SprintScreen extends BaseGameScreen {
             }
         }
 
-        // Left movement with DAS
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+        // Left movement with DAS - configured key
+        if (Gdx.input.isKeyPressed(config.KEY_MOVE_LEFT)) {
             // Initial press
             if (leftPressTime == 0) {
                 leftPressTime = currentTime;
@@ -219,8 +218,8 @@ public class SprintScreen extends BaseGameScreen {
             leftPressTime = 0;  // Reset only when key is released
         }
 
-        // Right movement with DAS
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+        // Right movement with DAS - configured key
+        if (Gdx.input.isKeyPressed(config.KEY_MOVE_RIGHT)) {
             // Initial press
             if (rightPressTime == 0) {
                 rightPressTime = currentTime;
@@ -257,8 +256,8 @@ public class SprintScreen extends BaseGameScreen {
             rightPressTime = 0;  // Reset only when key is released
         }
 
-        // Rotation - Clockwise (UP arrow)
-        if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+        // Rotation - Clockwise (configured key)
+        if (Gdx.input.isKeyJustPressed(config.KEY_ROTATE_CW)) {
             if (currentPiece.rotate(grid)) {
                 updateGhostPiece();
                 // Reset lock delay when piece is rotated
@@ -269,8 +268,8 @@ public class SprintScreen extends BaseGameScreen {
             }
         }
 
-        // Rotation - Counterclockwise (Z key)
-        if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
+        // Rotation - Counterclockwise (configured key)
+        if (Gdx.input.isKeyJustPressed(config.KEY_ROTATE_CCW)) {
             if (currentPiece.rotateCounterclockwise(grid)) {
                 updateGhostPiece();
                 // Reset lock delay when piece is rotated
@@ -281,8 +280,8 @@ public class SprintScreen extends BaseGameScreen {
             }
         }
 
-        // Rotation - 180 degrees (A key)
-        if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
+        // Rotation - 180 degrees (configured key)
+        if (Gdx.input.isKeyJustPressed(config.KEY_ROTATE_180)) {
             if (currentPiece.rotate180(grid)) {
                 updateGhostPiece();
                 // Reset lock delay when piece is rotated
@@ -291,11 +290,6 @@ public class SprintScreen extends BaseGameScreen {
                     lockResets++;
                 }
             }
-        }
-
-        // Hold piece (C key)
-        if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
-            holdPiece();
         }
     }
 
