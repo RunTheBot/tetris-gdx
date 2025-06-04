@@ -30,10 +30,11 @@ public class MenuScreen implements Screen {
         this.game = game;
     }
 
+    // creates styled buttons for the main menu
     VisTextButton createStyledButton(String text, Runnable action) {
         VisTextButton button = new VisTextButton(text);
         button.getLabel().setFontScale(2f);
-        button.setColor(new Color(0.2f, 0.2f, 0.2f, 0.8f));
+//        button.setColor(new Color(0.2f, 0.2f, 0.2f, 0.8f));
         button.addListener(event -> {
             if (button.isPressed()) {
                 action.run();
@@ -70,71 +71,12 @@ public class MenuScreen implements Screen {
         menuLabel.getColor().a = 0;
         menuLabel.addAction(Actions.fadeIn(1f));
 
-        // button to play classic mode
-        VisTextButton classicPlayButton = new VisTextButton("Classic Mode");
-        classicPlayButton.getLabel().setFontScale(2f);
-        classicPlayButton.addListener(event -> {
-            if (classicPlayButton.isPressed()) {
-                game.setScreen(new GameScreen(game));
-                return true;
-            }
-            return false;
-        });
-
-        // button to play sprint mode
-        VisTextButton sprintPlayButton = new VisTextButton("Sprint Mode");
-        sprintPlayButton.getLabel().setFontScale(2f);
-        sprintPlayButton.addListener(event -> {
-            if (sprintPlayButton.isPressed()) {
-                game.setScreen(new SprintScreen(game));
-                return true;
-            }
-            return false;
-        });
-
-        // button to play arcade mode
-        VisTextButton arcadePlayButton = new VisTextButton("Arcade Mode");
-        arcadePlayButton.getLabel().setFontScale(2f);
-        arcadePlayButton.addListener(event -> {
-            if (arcadePlayButton.isPressed()) {
-                game.setScreen(new ArcadeScreen(game));
-                return true;
-            }
-            return false;
-        });
-
-        // button to show instructions
-        VisTextButton instructionsButton = new VisTextButton("How to Play");
-        instructionsButton.getLabel().setFontScale(2f);
-        instructionsButton.addListener(event -> {
-            if (instructionsButton.isPressed()) {
-                game.setScreen(new InstructionsScreen(game));
-                return true;
-            }
-            return false;
-        });
-
-        // button to open settings menu
-        VisTextButton settingsButton = new VisTextButton("Settings");
-        settingsButton.getLabel().setFontScale(2f);
-        settingsButton.addListener(event -> {
-            if (settingsButton.isPressed()) {
-                game.setScreen(new SettingsScreen(game));
-                return true;
-            }
-            return false;
-        });
-
-        // button to quit the game
-        VisTextButton quitButton = new VisTextButton("Exit");
-        quitButton.getLabel().setFontScale(2f);
-        quitButton.addListener(event -> {
-            if (quitButton.isPressed()) {
-                Gdx.app.exit(); // quit the app
-                return true;
-            }
-            return false;
-        });
+        VisTextButton classicPlayButton = createStyledButton("Classic Mode", () -> game.setScreen(new GameScreen(game)));
+        VisTextButton sprintPlayButton = createStyledButton("Sprint Mode", () -> game.setScreen(new SprintScreen(game)));
+        VisTextButton arcadePlayButton = createStyledButton("Arcade Mode", () -> game.setScreen(new ArcadeScreen(game)));
+        VisTextButton instructionsButton = createStyledButton("How to Play", () -> game.setScreen(new InstructionsScreen(game)));
+        VisTextButton settingsButton = createStyledButton("Settings", () -> game.setScreen(new SettingsScreen(game)));
+        VisTextButton quitButton = createStyledButton("Exit Game", () -> Gdx.app.exit());
 
         // each button starts transparent
         classicPlayButton.getColor().a = 0;
