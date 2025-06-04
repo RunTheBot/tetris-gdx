@@ -1,6 +1,7 @@
 package me.runthebot.tetris;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -159,10 +160,17 @@ public class GameScreen extends BaseGameScreen {
         gravity = gravity + (level - 1) * 0.05f;
     }
 
+    // TODO: extract into BaseGameScreen
     private void handleInput() {
         if (gameOver) return; // Ignore input if game is over
 
         long currentTime = TimeUtils.millis();
+
+        // TODO: extract into BaseGameScreen
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            game.setScreen(new PauseScreen(game, this));
+            return;
+        }
 
         // Hold piece (configured keys)
         if (Gdx.input.isKeyJustPressed(config.KEY_HOLD) || Gdx.input.isKeyJustPressed(config.KEY_HOLD_ALT)) {
