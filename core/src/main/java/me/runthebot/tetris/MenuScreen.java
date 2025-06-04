@@ -14,6 +14,8 @@ import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -57,11 +59,34 @@ public class MenuScreen implements Screen {
         shapeRenderer = new ShapeRenderer();
         fallingPieces = new ArrayList<>();
 
+        float restrictedZoneTop = Gdx.graphics.getHeight() / 2f + 200;
+        float restrictedZoneBottom = Gdx.graphics.getHeight() / 2f - 200;
+
+        float leftSpawnRange = Gdx.graphics.getWidth() * 0.25f;
+        float rightSpawnRange = Gdx.graphics.getWidth() * 0.75f;
+
+        // use 7-bag randomizer
+        List<Tetrimino> bag = new ArrayList<>(Arrays.asList(Tetrimino.values()));
+        Collections.shuffle(bag);
+
         for (int i = 0; i < 5; i++) {
-            Tetrimino type = Tetrimino.values()[(int) (Math.random() * Tetrimino.values().length)];
-            Vector2 position = new Vector2((float) Math.random() * Gdx.graphics.getWidth(),
-                (float) Math.random() * Gdx.graphics.getHeight());
-            Vector2 velocity = new Vector2(0, -50); // speed
+            Tetrimino type = bag.get(i % bag.size()); // cycle through bag
+            Vector2 position;
+
+            // randomly choose between left and right spawn ranges
+            if (Math.random() < 0.5) {
+                position = new Vector2((float) Math.random() * leftSpawnRange,
+                    (float) Math.random() * Gdx.graphics.getHeight());
+            } else {
+                position = new Vector2(rightSpawnRange + (float) Math.random() * (Gdx.graphics.getWidth() - rightSpawnRange),
+                    (float) Math.random() * Gdx.graphics.getHeight());
+            }
+
+            while (position.y < restrictedZoneTop && position.y > restrictedZoneBottom) {
+                position.y = (float) Math.random() * Gdx.graphics.getHeight();
+            }
+
+            Vector2 velocity = new Vector2(0, -50); // fall speed
             fallingPieces.add(new FallingPiece(type, position, velocity));
         }
 
