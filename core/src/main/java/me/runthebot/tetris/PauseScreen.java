@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kotcrab.vis.ui.VisUI;
+import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 
 public class PauseScreen implements Screen {
@@ -31,6 +32,9 @@ public class PauseScreen implements Screen {
         Table table = new Table();
         table.setFillParent(true);
         stage.addActor(table);
+
+        VisLabel titleLabel = new VisLabel("PAUSED");
+        titleLabel.setFontScale(2.5f);
 
         VisTextButton resumeButton = new VisTextButton("Resume");
         VisTextButton quitButton = new VisTextButton("Quit to menu");
@@ -60,6 +64,7 @@ public class PauseScreen implements Screen {
             return false;
         });
 
+        table.add(titleLabel).padBottom(30).row();
         table.add(resumeButton).pad(10).row();
         table.add(quitButton).pad(10).row();
         table.add(exitButton).pad(10);
