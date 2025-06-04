@@ -10,10 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTextButton;
-import com.kotcrab.vis.ui.widget.VisWindow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +56,7 @@ public class MenuScreen implements Screen {
         menuLabel.addAction(Actions.fadeIn(1f));
 
         // button to play classic mode
-        VisTextButton classicPlayButton = new VisTextButton("Play Classic");
+        VisTextButton classicPlayButton = new VisTextButton("Classic Mode");
         classicPlayButton.getLabel().setFontScale(2f);
         classicPlayButton.addListener(event -> {
             if (classicPlayButton.isPressed()) {
@@ -69,7 +67,7 @@ public class MenuScreen implements Screen {
         });
 
         // button to play sprint mode
-        VisTextButton sprintPlayButton = new VisTextButton("Play Sprint");
+        VisTextButton sprintPlayButton = new VisTextButton("Sprint Mode");
         sprintPlayButton.getLabel().setFontScale(2f);
         sprintPlayButton.addListener(event -> {
             if (sprintPlayButton.isPressed()) {
@@ -80,7 +78,7 @@ public class MenuScreen implements Screen {
         });
 
         // button to play arcade mode
-        VisTextButton arcadePlayButton = new VisTextButton("Play Arcade");
+        VisTextButton arcadePlayButton = new VisTextButton("Arcade Mode");
         arcadePlayButton.getLabel().setFontScale(2f);
         arcadePlayButton.addListener(event -> {
             if (arcadePlayButton.isPressed()) {
@@ -102,7 +100,7 @@ public class MenuScreen implements Screen {
         });
 
         // button to quit the game
-        VisTextButton quitButton = new VisTextButton("Quit");
+        VisTextButton quitButton = new VisTextButton("Exit");
         quitButton.getLabel().setFontScale(2f);
         quitButton.addListener(event -> {
             if (quitButton.isPressed()) {
