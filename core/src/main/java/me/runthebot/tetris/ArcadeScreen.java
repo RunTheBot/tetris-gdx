@@ -243,6 +243,7 @@ public class ArcadeScreen extends BaseGameScreen {
         powerItems.add(new PowerItem(cell[0], cell[1], type));
     }
 
+    // CUSTOM FOR ARCADE
     public void placePiece(){
 
         collectPowers();
@@ -378,28 +379,6 @@ public class ArcadeScreen extends BaseGameScreen {
      * The held piece is stored in the holdPiece variable, and the current piece is replaced
      * by a new piece from the nextPieces queue.
      */
-    private void holdPiece() {
-        if (!canHold) return; // Can't hold twice in a row
-
-        Tetrimino currentType = currentPiece.getType();
-
-        if (holdPiece == null) {
-            // First hold - no piece to swap
-            holdPiece = new Piece(currentType);
-            spawnNewPiece();
-        } else {
-            // Swap pieces
-            Tetrimino holdType = holdPiece.getType();
-            holdPiece = new Piece(currentType);
-            currentPiece = new Piece(holdType);
-            // Reset rotation and position for piece coming from hold
-            currentPiece.setPosition(3, Tetris.BUFFER_SIZE - 2);
-            ghostPiece = new Piece(holdType);
-            updateGhostPiece();
-        }
-
-        canHold = false; // Prevent holding again until next piece
-    }
 
     private void updateGhostPiece() {
         // Create a fresh copy of the current piece to ensure correct shape/rotation
@@ -411,149 +390,6 @@ public class ArcadeScreen extends BaseGameScreen {
         while (ghostPiece.move(0, 1, grid)) { }
     }
 
-    private void handleInput() {
-        if (gameOver) return; // Ignore input if game is over
-
-        long currentTime = TimeUtils.millis();
-
-        // Hold piece (configured keys)
-        if (Gdx.input.isKeyJustPressed(config.KEY_HOLD) || Gdx.input.isKeyJustPressed(config.KEY_HOLD_ALT)) {
-            holdPiece();
-            return;
-        }
-
-        // Hard drop (configured key)
-        if (Gdx.input.isKeyJustPressed(config.KEY_HARD_DROP)) {
-            currentPiece.hardDrop(grid); // No need to store the return value
-            placePiece();
-            return;
-        }
-
-        // Soft drop (faster fall) - configured key
-        if (Gdx.input.isKeyPressed(config.KEY_MOVE_DOWN)) {
-            boolean moved = currentPiece.move(0, 1, grid);
-            if (moved) {
-                updateGhostPiece();
-                // Reset lock delay when manually moving down (soft drop)
-                if (lockDelayActive) {
-                    lockDelayStartTime = TimeUtils.millis();
-                    lockResets++;
-                }
-            }
-        }
-
-        // Left movement with DAS - configured key
-        if (Gdx.input.isKeyPressed(config.KEY_MOVE_LEFT)) {
-            // Initial press
-            if (leftPressTime == 0) {
-                leftPressTime = currentTime;
-                lastLeftMoveTime = currentTime;
-                if (currentPiece.move(-1, 0, grid)) {
-                    updateGhostPiece();
-                    // Reset lock delay when piece is moved
-                    if (lockDelayActive) {
-                        lockDelayStartTime = TimeUtils.millis();
-                        lockResets++;
-                    }
-                }
-            } else {
-                long elapsedSincePress = currentTime - leftPressTime;
-                long elapsedSinceLastMove = currentTime - lastLeftMoveTime;
-
-                // If we've passed the DAS delay, move all the way to the left edge
-                if (elapsedSincePress > config.DAS_DELAY && elapsedSinceLastMove >= config.ARR_DELAY) {
-                    boolean moved = false;
-                    // Move all the way to the left until it can't move anymore
-                    while (currentPiece.move(-1, 0, grid)) {
-                        moved = true;
-                        // Reset lock delay when piece is moved
-                        if (lockDelayActive) {
-                            lockDelayStartTime = TimeUtils.millis();
-                            lockResets++;
-                        }
-                    }
-                    if (moved) updateGhostPiece();
-                    lastLeftMoveTime = currentTime;
-                }
-            }
-        } else {
-            leftPressTime = 0;  // Reset only when key is released
-        }
-
-        // Right movement with DAS - configured key
-        if (Gdx.input.isKeyPressed(config.KEY_MOVE_RIGHT)) {
-            // Initial press
-            if (rightPressTime == 0) {
-                rightPressTime = currentTime;
-                lastRightMoveTime = currentTime;
-                if (currentPiece.move(1, 0, grid)) {
-                    updateGhostPiece();
-                    // Reset lock delay when piece is moved
-                    if (lockDelayActive) {
-                        lockDelayStartTime = TimeUtils.millis();
-                        lockResets++;
-                    }
-                }
-            } else {
-                long elapsedSincePress = currentTime - rightPressTime;
-                long elapsedSinceLastMove = currentTime - lastRightMoveTime;
-
-                // If we've passed the DAS delay and it's time for ARR movement
-                if (elapsedSincePress > config.DAS_DELAY && elapsedSinceLastMove >= config.ARR_DELAY) {
-                    boolean moved = false;
-                    // Move all the way to the right until it can't move anymore
-                    while (currentPiece.move(1, 0, grid)) {
-                        moved = true;
-                        // Reset lock delay when piece is moved
-                        if (lockDelayActive) {
-                            lockDelayStartTime = TimeUtils.millis();
-                            lockResets++;
-                        }
-                    }
-                    if (moved) updateGhostPiece();
-                    lastRightMoveTime = currentTime;
-                }
-            }
-        } else {
-            rightPressTime = 0;  // Reset only when key is released
-        }
-
-        // Rotation - Clockwise (configured key)
-        if (Gdx.input.isKeyJustPressed(config.KEY_ROTATE_CW)) {
-            if (currentPiece.rotate(grid)) {
-                updateGhostPiece();
-                // Reset lock delay when piece is rotated
-                if (lockDelayActive) {
-                    lockDelayStartTime = TimeUtils.millis();
-                    lockResets++;
-                }
-            }
-        }
-
-        // Rotation - Counterclockwise (configured key)
-        if (Gdx.input.isKeyJustPressed(config.KEY_ROTATE_CCW)) {
-            if (currentPiece.rotateCounterclockwise(grid)) {
-                updateGhostPiece();
-                // Reset lock delay when piece is rotated
-                if (lockDelayActive) {
-                    lockDelayStartTime = TimeUtils.millis();
-                    lockResets++;
-                }
-            }
-        }
-
-        // Rotation - 180 degrees (configured key)
-        if (Gdx.input.isKeyJustPressed(config.KEY_ROTATE_180)) {
-            if (currentPiece.rotate180(grid)) {
-                updateGhostPiece();
-                // Reset lock delay when piece is rotated
-                if (lockDelayActive) {
-                    lockDelayStartTime = TimeUtils.millis();
-                    lockResets++;
-                }
-            }
-        }
-    }
 
     /**
      * Updates gravity (fall speed) based on current level
