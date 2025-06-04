@@ -30,6 +30,21 @@ public class MenuScreen implements Screen {
         this.game = game;
     }
 
+    VisTextButton createStyledButton(String text, Runnable action) {
+        VisTextButton button = new VisTextButton(text);
+        button.getLabel().setFontScale(2f);
+        button.setColor(new Color(0.2f, 0.2f, 0.2f, 0.8f));
+        button.addListener(event -> {
+            if (button.isPressed()) {
+                action.run();
+                return true;
+            }
+            return false;
+        });
+        button.addAction(Actions.sequence(Actions.delay(0.5f), Actions.fadeIn(1f)));
+        return button;
+    }
+
     @Override
     public void show() {
         ScreenViewport viewport = new ScreenViewport();
@@ -142,10 +157,7 @@ public class MenuScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        // clear screen and render the main stage
         ScreenUtils.clear(Color.BLACK);
-
-        // render falling pieces
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         for (FallingPiece piece : fallingPieces) {
             piece.update(delta);
