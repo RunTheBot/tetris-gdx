@@ -126,12 +126,12 @@ public class MenuScreen implements Screen {
 
         // add each element to the table, pad each button
         table.add(menuLabel).padBottom(80f).row();
-        table.add(classicPlayButton).width(360).height(90).padBottom(30f).row();
-        table.add(sprintPlayButton).width(360).height(90).padBottom(30f).row();
-        table.add(arcadePlayButton).width(360).height(90).padBottom(30f).row();
-        table.add(instructionsButton).width(360).height(90).padBottom(30f).row();
-        table.add(settingsButton).width(360).height(90).padBottom(30f).row();
-        table.add(quitButton).width(360).height(90).padBottom(60f).row();
+        table.add(classicPlayButton).width(300).height(70).padBottom(30f).row();
+        table.add(sprintPlayButton).width(300).height(70).padBottom(30f).row();
+        table.add(arcadePlayButton).width(300).height(70).padBottom(30f).row();
+        table.add(instructionsButton).width(300).height(70).padBottom(30f).row();
+        table.add(settingsButton).width(300).height(70).padBottom(30f).row();
+        table.add(quitButton).width(300).height(70).padBottom(60f).row();
 
         stage.addActor(table);
     }
