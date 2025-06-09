@@ -226,18 +226,26 @@ public abstract class BaseGameScreen implements Screen {
                 long elapsedSinceLastMove = currentTime - lastLeftMoveTime;
 
                 // If we've passed the DAS delay, move all the way to the left edge
-                if (elapsedSincePress > config.DAS_DELAY && elapsedSinceLastMove >= config.ARR_DELAY) {
+                if (elapsedSinceLastMove >= config.ARR_DELAY) {
                     boolean moved = false;
-                    // Move all the way to the left until it can't move anymore
-                    while (currentPiece.move(-1, 0, grid)) {
-                        moved = true;
+                    if (elapsedSincePress > config.DAS_DELAY) {
+                        // Move all the way to the left until it can't move anymore
+                        while (currentPiece.move(-1, 0, grid)) {
+                            moved = true;
+                        }
+                    } else {
+                        moved = currentPiece.move(-1, 0, grid);
+                    }
+
+                    if (moved) {
+                        updateGhostPiece();
                         // Reset lock delay when piece is moved
                         if (lockDelayActive && lockResets < MAX_LOCK_RESETS) {
                             lockDelayStartTime = TimeUtils.millis();
                             lockResets++;
                         }
-                    }
-                    if (moved) updateGhostPiece();
+                    };
+
                     lastLeftMoveTime = currentTime;
                 }
             }
@@ -263,19 +271,27 @@ public abstract class BaseGameScreen implements Screen {
                 long elapsedSincePress = currentTime - rightPressTime;
                 long elapsedSinceLastMove = currentTime - lastRightMoveTime;
 
+                boolean moved = false;
+
                 // If we've passed the DAS delay and it's time for ARR movement
-                if (elapsedSincePress > config.DAS_DELAY && elapsedSinceLastMove >= config.ARR_DELAY) {
-                    boolean moved = false;
-                    // Move all the way to the right until it can't move anymore
-                    while (currentPiece.move(1, 0, grid)) {
-                        moved = true;
+                if (elapsedSinceLastMove >= config.ARR_DELAY) {
+                    if (elapsedSincePress > config.DAS_DELAY) {
+                        // Move all the way to the right until it can't move anymore
+                        while (currentPiece.move(1, 0, grid)) {
+                            moved = true;
+                        }
+                    } else {
+                        moved = currentPiece.move(1, 0, grid);
+                    }
+
+                    if (moved) {
+                        updateGhostPiece();
                         // Reset lock delay when piece is moved
                         if (lockDelayActive && lockResets < MAX_LOCK_RESETS) {
                             lockDelayStartTime = TimeUtils.millis();
                             lockResets++;
                         }
                     }
-                    if (moved) updateGhostPiece();
                     lastRightMoveTime = currentTime;
                 }
             }
