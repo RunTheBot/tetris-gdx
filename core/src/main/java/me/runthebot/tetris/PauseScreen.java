@@ -31,14 +31,18 @@ public class PauseScreen implements Screen {
     private void createUI() {
         Table table = new Table();
         table.setFillParent(true);
-        stage.addActor(table);
+        table.center();
 
         VisLabel titleLabel = new VisLabel("PAUSED");
-        titleLabel.setFontScale(2.5f);
+        titleLabel.setFontScale(3);
 
         VisTextButton resumeButton = new VisTextButton("Resume");
         VisTextButton quitButton = new VisTextButton("Quit to menu");
         VisTextButton exitButton = new VisTextButton("Exit game");
+
+        resumeButton.getLabel().setFontScale(2f);
+        quitButton.getLabel().setFontScale(2f);
+        exitButton.getLabel().setFontScale(2f);
 
         resumeButton.addListener(event -> {
             if (resumeButton.isPressed()) {
@@ -65,9 +69,11 @@ public class PauseScreen implements Screen {
         });
 
         table.add(titleLabel).padBottom(30).row();
-        table.add(resumeButton).pad(10).row();
-        table.add(quitButton).pad(10).row();
-        table.add(exitButton).pad(10);
+        table.add(resumeButton).width(300).height(70).pad(10).row();
+        table.add(quitButton).width(300).height(70).pad(10).row();
+        table.add(exitButton).width(300).height(70).pad(10);
+
+        stage.addActor(table);
     }
 
 
