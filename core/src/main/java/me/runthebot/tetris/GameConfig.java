@@ -9,11 +9,11 @@ public class GameConfig {
     /**
      * Delayed Auto Shift (ms before piece starts moving when holding left/right)
      */
-    public float DAS_DELAY = 170;
+    public float DAS_DELAY = 200;
     /**
      * Auto Repeat Rate (ms between repeated moves when holding left/right)
      */
-    public float ARR_DELAY = 30;
+    public float ARR_DELAY = 130;
     /**
      * Whether to render a preview of where the current piece will land
      */
