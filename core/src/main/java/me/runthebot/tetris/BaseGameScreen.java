@@ -234,6 +234,7 @@ public abstract class BaseGameScreen implements Screen {
                             moved = true;
                         }
                     } else {
+                        // ARR - Fix Suggested By Classmate
                         moved = currentPiece.move(-1, 0, grid);
                     }
 
@@ -281,6 +282,7 @@ public abstract class BaseGameScreen implements Screen {
                             moved = true;
                         }
                     } else {
+                        // ARR - Fix Suggested By Classmate
                         moved = currentPiece.move(1, 0, grid);
                     }
 

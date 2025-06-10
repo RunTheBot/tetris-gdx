@@ -4,9 +4,10 @@ package me.runthebot.tetris;
  * Super Rotation System (SRS) implementation for Tetris.
  * Contains kick tables and logic for piece rotation with wall kicks.
  * Based on "TGM-ACE SRS study" (http://www.the-shell.net/img/srs_study.html)
+ * Suggested By Classmate
  */
 public class SRS {
-    
+
     // Block position data for each piece type, rotation state, and block
     // Format: [piece_type][rotation_state][block_index]
     private static final int[][][] SRS_BLOCK_DATA_X = {
@@ -190,22 +191,22 @@ public class SRS {
     private static final int[][][] OTHER_BLOCK_180_KICK_TABLE = {
         // From rotation 0 to 2
         {
-            {0, 0}, {1, 0}, {2, 0}, {1, 1}, {2, 1}, {-1, 0}, {-2, 0}, 
+            {0, 0}, {1, 0}, {2, 0}, {1, 1}, {2, 1}, {-1, 0}, {-2, 0},
             {-1, 1}, {-2, 1}, {0, -1}, {3, 0}, {-3, 0}
         },
         // From rotation 1 to 3
         {
-            {0, 0}, {0, 1}, {0, 2}, {-1, 1}, {-1, 2}, {0, -1}, {0, -2}, 
+            {0, 0}, {0, 1}, {0, 2}, {-1, 1}, {-1, 2}, {0, -1}, {0, -2},
             {-1, -1}, {-1, -2}, {1, 0}, {0, 3}, {0, -3}
         },
         // From rotation 2 to 0
         {
-            {0, 0}, {-1, 0}, {-2, 0}, {-1, -1}, {-2, -1}, {1, 0}, {2, 0}, 
+            {0, 0}, {-1, 0}, {-2, 0}, {-1, -1}, {-2, -1}, {1, 0}, {2, 0},
             {1, -1}, {2, -1}, {0, 1}, {-3, 0}, {3, 0}
         },
         // From rotation 3 to 1
         {
-            {0, 0}, {0, 1}, {0, 2}, {1, 1}, {1, 2}, {0, -1}, {0, -2}, 
+            {0, 0}, {0, 1}, {0, 2}, {1, 1}, {1, 2}, {0, -1}, {0, -2},
             {1, -1}, {1, -2}, {-1, 0}, {0, 3}, {0, -3}
         }
     };
@@ -256,20 +257,20 @@ public class SRS {
     public static boolean attemptRotation(Piece piece, Grid grid, boolean clockwise) {
         int currentRotation = piece.getRotation();
         int newRotation = clockwise ? (currentRotation + 1) % 4 : (currentRotation + 3) % 4;
-        
+
         // Get the rotated shape
         boolean[][] rotatedShape = piece.getType().getShape(newRotation);
-        
+
         // Determine which kick table to use
         boolean isIPiece = piece.getType() == Tetrimino.I;
         int[][][] kickTable = isIPiece ? I_BLOCK_KICK_TABLE : OTHER_BLOCK_KICK_TABLE;
-        
+
         // Try each kick test
         int[][] kicks = kickTable[currentRotation];
         for (int[] kick : kicks) {
             int testX = piece.getX() + kick[0];
             int testY = piece.getY() + kick[1];
-            
+
             if (!collides(testX, testY, rotatedShape, grid)) {
                 // Successful kick - apply the rotation
                 piece.setPosition(testX, testY);
@@ -278,7 +279,7 @@ public class SRS {
                 return true;
             }
         }
-        
+
         return false; // All kick tests failed
     }
 
@@ -291,20 +292,20 @@ public class SRS {
     public static boolean attempt180Rotation(Piece piece, Grid grid) {
         int currentRotation = piece.getRotation();
         int newRotation = (currentRotation + 2) % 4;
-        
+
         // Get the rotated shape
         boolean[][] rotatedShape = piece.getType().getShape(newRotation);
-        
+
         // Determine which kick table to use
         boolean isIPiece = piece.getType() == Tetrimino.I;
         int[][][] kickTable = isIPiece ? I_BLOCK_180_KICK_TABLE : OTHER_BLOCK_180_KICK_TABLE;
-        
+
         // Try each kick test
         int[][] kicks = kickTable[currentRotation];
         for (int[] kick : kicks) {
             int testX = piece.getX() + kick[0];
             int testY = piece.getY() + kick[1];
-            
+
             if (!collides(testX, testY, rotatedShape, grid)) {
                 // Successful kick - apply the rotation
                 piece.setPosition(testX, testY);
@@ -313,7 +314,7 @@ public class SRS {
                 return true;
             }
         }
-        
+
         return false; // All kick tests failed
     }
 

@@ -246,6 +246,8 @@ public class ArcadeScreen extends BaseGameScreen {
     // CUSTOM FOR ARCADE
     public void placePiece(){
 
+        // Collect powers on lock - Fix Suggested By Classmate
+        // Allows avoidance of power-downs
         collectPowers();
 
         grid.lockPiece(currentPiece);
