@@ -31,7 +31,7 @@ public class FallingPiece {
         this.velocity = velocity;
         this.color = type.getColor();
         this.rotation = 0;
-        this.rotationSpeed = (float) (Math.random() * 50 - 25);
+        this.rotationSpeed = (float) (Math.random() * 50 - 25); // Random rotation speed
     }
 
     /**

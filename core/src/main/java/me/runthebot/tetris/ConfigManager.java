@@ -29,7 +29,7 @@ public class ConfigManager {
 
     /**
      * Returns the current instance of the config manager
-     * @return
+     * @return ConfigManager instance
      */
     public static ConfigManager getInstance() {
         if (instance == null) {
@@ -40,7 +40,7 @@ public class ConfigManager {
 
     /**
      * Returns the current game configuration
-     * @return
+     * @return GameConfig object
      */
     public GameConfig getConfig() {
         return config;
@@ -79,6 +79,7 @@ public class ConfigManager {
         config = new GameConfig();
 
         if (file.exists()) {
+            // Read config values into a map
             Map<String, String> values = new HashMap<>();
             String[] lines = file.readString().split("\n");
 
@@ -89,6 +90,7 @@ public class ConfigManager {
                 }
             }
 
+            // Parse config values, using defaults if necessary
             config.DAS_DELAY = Float.parseFloat(values.getOrDefault("DAS_DELAY", "170"));
             config.ARR_DELAY = Float.parseFloat(values.getOrDefault("ARR_DELAY", "30"));
             config.showGhostPiece = Boolean.parseBoolean(values.getOrDefault("showGhostPiece", "true"));

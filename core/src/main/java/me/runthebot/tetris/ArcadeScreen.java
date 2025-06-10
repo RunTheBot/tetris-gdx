@@ -243,7 +243,12 @@ public class ArcadeScreen extends BaseGameScreen {
         powerItems.add(new PowerItem(cell[0], cell[1], type));
     }
 
-    // CUSTOM FOR ARCADE
+    /**
+     * Custom placePiece method for Arcade mode.
+     * This method handles the placement of a Tetris piece on the grid, including
+     * collecting power-ups, locking the piece, clearing lines, calculating the score,
+     * updating game stats, and spawning a new piece.
+     */
     public void placePiece(){
 
         // Collect powers on lock - Fix Suggested By Classmate
