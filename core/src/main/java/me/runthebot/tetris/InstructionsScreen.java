@@ -103,6 +103,10 @@ public class InstructionsScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
     }
 
+    /**
+     * Creates the instructions content
+     * @return
+     */
     private Table createInstructionsContent() {
         Table content = new Table();
         content.defaults().pad(7).align(Align.left).expandX(); // Add expandX to fill width
@@ -251,6 +255,12 @@ public class InstructionsScreen implements Screen {
         return content;
     }
 
+    /**
+     * Adds the control row to the main table.
+     * @param table
+     * @param action
+     * @param key
+     */
     private void addControlRow(Table table, String action, String key) {
         VisLabel actionLabel = new VisLabel(action);
         VisLabel keyLabel = new VisLabel(key);

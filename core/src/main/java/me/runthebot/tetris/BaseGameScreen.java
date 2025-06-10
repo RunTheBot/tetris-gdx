@@ -22,6 +22,7 @@ public abstract class BaseGameScreen implements Screen {
     protected long lastLeftMoveTime = 0;
     protected long lastRightMoveTime = 0;
 
+    // initialize shape renderer, sprite batch, and font
     protected final ShapeRenderer shapeRenderer;
     protected final SpriteBatch spriteBatch;
     protected final BitmapFont font;
@@ -60,6 +61,7 @@ public abstract class BaseGameScreen implements Screen {
     protected void renderHoldPiece() {
         if (holdPiece == null) return;
 
+        // get details on piece being held
         boolean[][] shape = holdPiece.getType().getShape();
         Color color = holdPiece.getType().getColor();
 
@@ -102,12 +104,16 @@ public abstract class BaseGameScreen implements Screen {
         shapeRenderer.end();
     }
 
+    /**
+     * Renders the next piece in the queue.
+     */
     protected void renderNextPiece() {
         if (nextPieces.isEmpty()) return;
 
         // get the next piece
         Tetrimino nextPiece = nextPieces.peek();
 
+        // get piece details
         boolean[][] shape = nextPiece.getShape();
         Color color = nextPiece.getColor();
 
@@ -148,11 +154,15 @@ public abstract class BaseGameScreen implements Screen {
 
     public abstract void placePiece();
 
+    /**
+     * Holds the current piece.
+     */
     protected void holdPiece() {
         if (!canHold) return; // Can't hold twice in a row
 
         Tetrimino currentType = currentPiece.getType();
 
+        // check if there is a current piece being held
         if (holdPiece == null) {
             // First hold - no piece to swap
             holdPiece = new Piece(currentType);
@@ -171,6 +181,9 @@ public abstract class BaseGameScreen implements Screen {
         canHold = false; // Prevent holding again until next piece
     }
 
+    /**
+     * Handles the user input.
+     */
     protected void handleInput() {
         if (gameOver) return; // Ignore input if game is over
 
@@ -347,6 +360,9 @@ public abstract class BaseGameScreen implements Screen {
         nextPieces.addAll(bag);
     }
 
+    /**
+     * Spawns new piece.
+     */
     protected void spawnNewPiece() {
         // Check if we need to refill the bag
         if (nextPieces.size() < 7) {

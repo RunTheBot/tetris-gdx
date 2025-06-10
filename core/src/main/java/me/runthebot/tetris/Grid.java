@@ -118,8 +118,11 @@ public class Grid {
         }
     }
 
+    /**
+     * Renders the grid using provided renderer.
+     * @param renderer
+     */
     public void render(ShapeRenderer renderer) {
-
         // Draw border around the play area
         renderer.begin(ShapeRenderer.ShapeType.Filled);
         renderer.setColor(0.3f, 0.3f, 0.3f, 1);
