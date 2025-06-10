@@ -31,6 +31,10 @@ public class KeyBindingsScreen implements Screen {
         "Rotate Counter-Clockwise", "Rotate 180°", "Hard Drop", "Hold Piece", "Hold Piece (Alt)"
     };
 
+    /**
+     * Constructor for the KeyBindingsScreen.
+     * @param game The main game class.
+     */
     public KeyBindingsScreen(final Tetris game) {
         this.game = game;
         this.configManager = ConfigManager.getInstance();
@@ -42,14 +46,14 @@ public class KeyBindingsScreen implements Screen {
         ScreenViewport viewport = new ScreenViewport();
         stage = new Stage(viewport);
 
-        // Title
+        // Title label
         VisLabel titleLabel = new VisLabel("Key Bindings");
         titleLabel.setFontScale(2.2f);
 
-        // Initialize button array
+        // Initialize button array to hold key binding buttons
         keyButtons = new VisTextButton[actionNames.length];
 
-        // Create a table for each key binding
+        // Create a table for each key binding row
         Table keysTable = new Table();
         keysTable.defaults().pad(10).left();
 

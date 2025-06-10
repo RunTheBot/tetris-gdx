@@ -11,11 +11,20 @@ import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 
+/**
+ * The pause screen for the Tetris game.
+ * Allows the player to resume the game, quit to the menu, or exit the game.
+ */
 public class PauseScreen implements Screen {
     private final Tetris game;
     private final Screen previousScreen;
     private  final Stage stage;
 
+    /**
+     * Constructor for the PauseScreen.
+     * @param game The main Tetris game instance.
+     * @param previousScreen The screen to return to when resuming.
+     */
     public PauseScreen(Tetris game, Screen previousScreen) {
         this.game = game;
         this.previousScreen = previousScreen;
@@ -28,6 +37,9 @@ public class PauseScreen implements Screen {
         createUI();
     }
 
+    /**
+     * Creates the UI elements for the pause screen.
+     */
     private void createUI() {
         Table table = new Table();
         table.setFillParent(true);
@@ -77,6 +89,10 @@ public class PauseScreen implements Screen {
     }
 
 
+    /**
+     * Renders the pause screen.
+     * @param delta The time in seconds since the last frame.
+     */
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0,0.8f);
@@ -86,23 +102,43 @@ public class PauseScreen implements Screen {
         stage.draw();
     }
 
+    /**
+     * Resizes the viewport when the screen size changes.
+     * @param width The new width of the screen.
+     * @param height The new height of the screen.
+     */
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
     }
 
+    /**
+     * Called when this screen becomes the current screen for a {@link Game}.
+     */
     @Override
     public void show() {}
 
+    /**
+     * Called when this screen is no longer the current screen for a {@link Game}.
+     */
     @Override
     public void hide() {}
 
+    /**
+     * Called when the {@link Application} is paused.
+     */
     @Override
     public void pause() {}
 
+    /**
+     * Called when the {@link Application} is resumed.
+     */
     @Override
     public void resume() {}
 
+    /**
+     * Disposes of the resources used by this screen.
+     */
     @Override
     public void dispose() {
         stage.dispose();

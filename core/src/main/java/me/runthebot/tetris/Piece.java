@@ -34,8 +34,9 @@ public class Piece {
 
     /**
      * Attempts to move the piece by the given delta.
-     * @param dx X movement
-     * @param dy Y movement
+     *
+     * @param dx    X movement
+     * @param dy    Y movement
      * @param field The grid to check for collisions
      * @return true if the move was successful, else false
      */
@@ -52,6 +53,7 @@ public class Piece {
 
     /**
      * Attempts to rotate the piece clockwise using SRS (Super Rotation System).
+     *
      * @param field The grid to check for collisions
      * @return true if the rotation worked, else false
      */

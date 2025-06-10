@@ -28,11 +28,21 @@ public class MenuScreen implements Screen {
     private ShapeRenderer shapeRenderer;
     private List<FallingPiece> fallingPieces;
 
+    /**
+     * Constructor for the MenuScreen.
+     * @param game The main Tetris game instance.
+     */
     public MenuScreen(final Tetris game) {
         this.game = game;
     }
 
     // creates styled buttons for the main menu
+    /**
+     * Creates a styled VisTextButton with the given text and action.
+     * @param text The text to display on the button.
+     * @param action The Runnable action to execute when the button is pressed.
+     * @return The created VisTextButton.
+     */
     VisTextButton createStyledButton(String text, Runnable action) {
         VisTextButton button = new VisTextButton(text);
         button.getLabel().setFontScale(2f);
@@ -50,6 +60,7 @@ public class MenuScreen implements Screen {
 
     @Override
     public void show() {
+        // Set up the viewport and stage
         ScreenViewport viewport = new ScreenViewport();
         stage = new Stage(viewport);
         // take input from this screen
@@ -59,9 +70,11 @@ public class MenuScreen implements Screen {
         shapeRenderer = new ShapeRenderer();
         fallingPieces = new ArrayList<>();
 
+        // Define the restricted zone where pieces shouldn't spawn
         float restrictedZoneTop = Gdx.graphics.getHeight() / 2f + 200;
         float restrictedZoneBottom = Gdx.graphics.getHeight() / 2f - 200;
 
+        // Define the left and right spawn ranges
         float leftSpawnRange = Gdx.graphics.getWidth() * 0.25f;
         float rightSpawnRange = Gdx.graphics.getWidth() * 0.75f;
 
@@ -69,6 +82,7 @@ public class MenuScreen implements Screen {
         List<Tetrimino> bag = new ArrayList<>(Arrays.asList(Tetrimino.values()));
         Collections.shuffle(bag);
 
+        // Create falling pieces
         for (int i = 0; i < 5; i++) {
             Tetrimino type = bag.get(i % bag.size()); // cycle through bag
             Vector2 position;
@@ -82,6 +96,7 @@ public class MenuScreen implements Screen {
                     (float) Math.random() * Gdx.graphics.getHeight());
             }
 
+            // Ensure the piece is not spawned in the restricted zone
             while (position.y < restrictedZoneTop && position.y > restrictedZoneBottom) {
                 position.y = (float) Math.random() * Gdx.graphics.getHeight();
             }
@@ -96,6 +111,7 @@ public class MenuScreen implements Screen {
         menuLabel.getColor().a = 0;
         menuLabel.addAction(Actions.fadeIn(1f));
 
+        // Create buttons for different game modes and options
         VisTextButton classicPlayButton = createStyledButton("Classic Mode", () -> game.setScreen(new GameScreen(game)));
         VisTextButton sprintPlayButton = createStyledButton("Sprint Mode", () -> game.setScreen(new SprintScreen(game)));
         VisTextButton arcadePlayButton = createStyledButton("Arcade Mode", () -> game.setScreen(new ArcadeScreen(game)));

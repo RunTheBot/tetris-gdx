@@ -22,6 +22,10 @@ public class SprintScreen extends BaseGameScreen {
     private int highScore = 0;
     private int level = 1;
 
+    /**
+     * Constructor for the SprintScreen class. Initializes the sprint mode.
+     * @param game The main Tetris game instance.
+     */
     public SprintScreen(final Tetris game) {
         super(game);
 
@@ -33,8 +37,13 @@ public class SprintScreen extends BaseGameScreen {
         gravity = 0.5f; // Fixed gravity for sprint mode
     }
 
+    /**
+     * Render method called each frame. Handles game logic, rendering, and user input.
+     * @param delta The time in seconds since the last frame.
+     */
     @Override
     public void render(float delta) {
+        // Check if the game is over
         if (gameOver) {
             // Capture final stats
             long finalTime = TimeUtils.millis() - startTime;
@@ -100,6 +109,9 @@ public class SprintScreen extends BaseGameScreen {
         renderUI();
     }
 
+    /**
+     * Renders the UI elements, including the sprint mode stats.
+     */
     private void renderUI() {
         spriteBatch.begin();
         font.setColor(Color.WHITE);
@@ -126,6 +138,9 @@ public class SprintScreen extends BaseGameScreen {
         spriteBatch.end();
     }
 
+    /**
+     * Places the current piece on the grid and handles line clears and speed updates.
+     */
     public void placePiece() {
         grid.lockPiece(currentPiece);
 
@@ -149,6 +164,9 @@ public class SprintScreen extends BaseGameScreen {
         canHold = true; // Reset the hold flag after placing a piece
     }
 
+    /**
+     * Updates the game state, including gravity and lock delay.
+     */
     private void update() {
         if (gameOver) return; // Stop updates if game is over
 
@@ -188,6 +206,9 @@ public class SprintScreen extends BaseGameScreen {
         }
     }
 
+    /**
+     * Updates the position of the ghost piece to reflect where the current piece would land.
+     */
     private void updateGhostPiece() {
         // Create a fresh copy of the current piece to ensure correct shape/rotation
         ghostPiece = new Piece(currentPiece.getType());
@@ -198,8 +219,20 @@ public class SprintScreen extends BaseGameScreen {
         while (ghostPiece.move(0, 1, grid)) { }
     }
 
+    /**
+     * Called when this screen becomes the current screen for the Game.
+     */
     @Override public void show() {}
+    /**
+     * Called when the Application is paused, usually when it's not active or visible on-screen.
+     */
     @Override public void pause() {}
+    /**
+     * Called when the Application is resumed after being paused.
+     */
     @Override public void resume() {}
+    /**
+     * Called when this screen is no longer the current screen for the Game.
+     */
     @Override public void hide() {}
 }

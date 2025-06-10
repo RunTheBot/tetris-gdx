@@ -232,7 +232,9 @@ public class SRS {
     };
 
     /**
-     * Gets the piece type index for kick table lookups
+     * Gets the piece type index for kick table lookups.
+     * @param type The Tetrimino type.
+     * @return The index corresponding to the piece type.
      */
     private static int getPieceTypeIndex(Tetrimino type) {
         switch (type) {
@@ -248,11 +250,11 @@ public class SRS {
     }
 
     /**
-     * Attempts to rotate a piece using SRS kick system
-     * @param piece The piece to rotate
-     * @param grid The game grid to check collisions against
-     * @param clockwise True for clockwise rotation, false for counterclockwise
-     * @return True if rotation was successful, false otherwise
+     * Attempts to rotate a piece using SRS kick system.
+     * @param piece The piece to rotate.
+     * @param grid The game grid to check collisions against.
+     * @param clockwise True for clockwise rotation, false for counterclockwise.
+     * @return True if rotation was successful, false otherwise.
      */
     public static boolean attemptRotation(Piece piece, Grid grid, boolean clockwise) {
         int currentRotation = piece.getRotation();
@@ -284,10 +286,10 @@ public class SRS {
     }
 
     /**
-     * Attempts a 180-degree rotation using SRS kick system
-     * @param piece The piece to rotate
-     * @param grid The game grid to check collisions against
-     * @return True if rotation was successful, false otherwise
+     * Attempts a 180-degree rotation using SRS kick system.
+     * @param piece The piece to rotate.
+     * @param grid The game grid to check collisions against.
+     * @return True if rotation was successful, false otherwise.
      */
     public static boolean attempt180Rotation(Piece piece, Grid grid) {
         int currentRotation = piece.getRotation();
@@ -319,12 +321,12 @@ public class SRS {
     }
 
     /**
-     * Check if the block collides with the grid or other blocks
-     * @param tx Test X position
-     * @param ty Test Y position
-     * @param shape The shape to test
-     * @param field The grid to test against
-     * @return true if the block collides, else false
+     * Check if the block collides with the grid or other blocks.
+     * @param tx Test X position.
+     * @param ty Test Y position.
+     * @param shape The shape to test.
+     * @param field The grid to test against.
+     * @return true if the block collides, else false.
      */
     private static boolean collides(int tx, int ty, boolean[][] shape, Grid field) {
         for (int row = 0; row < shape.length; row++) {

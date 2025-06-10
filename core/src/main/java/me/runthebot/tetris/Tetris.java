@@ -12,19 +12,30 @@ import com.kotcrab.vis.ui.VisUI;
  * Sets up the camera, viewport, and initial screen.
  */
 public class Tetris extends Game {
+    /** Width of the Tetris grid. */
     public static final int GRID_WIDTH = 10;
+    /** Size of the buffer region above the visible grid. */
     public static final int BUFFER_SIZE = 20;
+    /** Height of the Tetris grid including the buffer. */
     public static final int GRID_HEIGHT = 20 + BUFFER_SIZE;
+    /** Width of the viewport in world units. */
     public static float VIEWPORT_WIDTH = GRID_WIDTH * 2.5f;
+    /** Height of the viewport in world units. */
     public static float VIEWPOET_HEIGHT = (GRID_HEIGHT - BUFFER_SIZE + 2);
 //    public static final int BLOCK_SIZE = 30;
 
-    // initialize the game features (used for screen features)
+    /** Used for drawing sprites and textures. */
     public SpriteBatch batch;
+    /** Font used for drawing text. */
     public BitmapFont font;
+    /** Manages the viewport for different screen sizes. */
     public FitViewport viewport;
+    /** Camera used for the viewport. */
     public OrthographicCamera camera;
 
+    /**
+     * Called when the game is created. Initializes game resources and sets the initial screen.
+     */
     @Override
     public void create() {
         // load UI library
@@ -44,11 +55,16 @@ public class Tetris extends Game {
         this.setScreen(new MenuScreen(this));
     }
 
+    /**
+     * Called every frame. Renders the current screen.
+     */
     public void render() {
         super.render();
     }
 
-    // destroy the ui when the screen is closed
+    /**
+     * Called when the game is disposed. Releases all resources.
+     */
     @Override
     public void dispose() {
         super.dispose();

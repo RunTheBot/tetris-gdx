@@ -23,6 +23,10 @@ public class SettingsScreen implements Screen {
     private VisSlider arrSlider;
     private VisLabel arrValueLabel;
 
+    /**
+     * Constructor for the SettingsScreen.
+     * @param game The main Tetris game instance.
+     */
     public SettingsScreen(final Tetris game) {
         this.game = game;
         this.configManager = ConfigManager.getInstance();
