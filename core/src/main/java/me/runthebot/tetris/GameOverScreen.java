@@ -30,12 +30,18 @@ public class GameOverScreen implements Screen {
     private float maxSpeed;
     private int linesLeft;
 
+    /**
+     * Constructor for the GameOverScreen.
+     * This constructor is used when the game is over and the game stats are not yet available.
+     * @param game The main game class.
+     * @param gameType The type of game that was played.
+     */
     public GameOverScreen(final Tetris game, String gameType) {
         this.game = game;
         this.gameType = gameType;
 
         // In a real implementation, these would be passed from the game screen
-        // This is just a placeholder until we implement a proper way to pass the stats
+        // These are placeholder values until we implement a proper way to pass the stats
         this.score = 0;
         this.level = 1;
         this.linesCleared = 0;
@@ -46,7 +52,17 @@ public class GameOverScreen implements Screen {
     }
 
     /**
-     * Constructor with game stats
+     * Constructor for the GameOverScreen with game stats.
+     * This constructor is used when the game is over and the game stats are available.
+     * @param game The main game class.
+     * @param gameType The type of game that was played.
+     * @param score The final score of the game.
+     * @param level The final level of the game.
+     * @param linesCleared The number of lines cleared during the game.
+     * @param time The time taken to complete the game.
+     * @param currentSpeed The current speed of the game.
+     * @param maxSpeed The maximum speed reached during the game.
+     * @param linesLeft The number of lines left to clear (for sprint mode).
      */
     public GameOverScreen(final Tetris game, String gameType, int score, int level, int linesCleared,
                          long time, float currentSpeed, float maxSpeed, int linesLeft) {
