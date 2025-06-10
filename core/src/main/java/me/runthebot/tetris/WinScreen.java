@@ -31,6 +31,11 @@ public class WinScreen implements Screen {
     private int linesLeft;
     private int highScore;
 
+    /**
+     * WinScreen class.
+     * @param game
+     * @param gameType
+     */
     public WinScreen(final Tetris game, String gameType) {
         this.game = game;
         this.gameType = gameType;
@@ -48,7 +53,16 @@ public class WinScreen implements Screen {
     }
 
     /**
-     * Constructor with game stats
+     * Renders the WinScreen.
+     * @param game
+     * @param gameType
+     * @param score
+     * @param level
+     * @param linesCleared
+     * @param time
+     * @param currentSpeed
+     * @param maxSpeed
+     * @param highScore
      */
     public WinScreen(final Tetris game, String gameType, int score, int level, int linesCleared,
                     long time, float currentSpeed, float maxSpeed, int highScore) {
